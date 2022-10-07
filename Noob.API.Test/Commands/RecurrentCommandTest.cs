@@ -180,7 +180,7 @@ namespace Noob.API.Test.Commands
                 Assert.Greater(command.ExecutedAt, DateTime.Now.AddSeconds(-1));
                 Assert.True(response.Success);
                 Assert.AreEqual($"You have redeemed your weekly reward of {newUser.Niblets} Niblets!", response.Message);
-                Assert.GreaterOrEqual(newUser.Niblets, 100);
+                Assert.GreaterOrEqual(newUser.Niblets, 50);
             }
 
             [Test]
@@ -196,7 +196,7 @@ namespace Noob.API.Test.Commands
                 Assert.Greater(command.ExecutedAt, DateTime.Now.AddSeconds(-1));
                 Assert.True(response.Success);
                 Assert.AreEqual($"You have redeemed your weekly reward of {user.Niblets} Niblets!", response.Message);
-                Assert.GreaterOrEqual(user.Niblets, 100);
+                Assert.GreaterOrEqual(user.Niblets, 50);
             }
 
             [Test]
@@ -219,7 +219,7 @@ namespace Noob.API.Test.Commands
                 Assert.Greater(updatedCommand.ExecutedAt, DateTime.Now.AddSeconds(-1));
                 Assert.True(response.Success);
                 Assert.AreEqual($"You have redeemed your weekly reward of {user.Niblets} Niblets!", response.Message);
-                Assert.GreaterOrEqual(user.Niblets, 100);
+                Assert.GreaterOrEqual(user.Niblets, 50);
             }
 
             [Test]
@@ -243,7 +243,7 @@ namespace Noob.API.Test.Commands
                 Assert.Greater(updatedCommand.ExecutedAt, DateTime.Now.AddSeconds(-1));
                 Assert.True(response.Success);
                 Assert.AreEqual($"You have redeemed your weekly reward of {user.Niblets - oldNiblets} Niblets!", response.Message);
-                Assert.GreaterOrEqual(user.Niblets, oldNiblets + 100);
+                Assert.GreaterOrEqual(user.Niblets, oldNiblets + 50);
             }
         }
     }

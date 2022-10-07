@@ -61,7 +61,7 @@ namespace Noob.API.Commands
                 ExecutedAt = DateTime.Now
             });
 
-        private static int RandomNibletsDaily() => new Random().Next(1, 100);
-        private static int RandomNibletsWeekly() => new Random().Next(100, 1000);
+        private static int RandomNibletsDaily() => new Random().Next(1, 50);
+        private static int RandomNibletsWeekly() => new Random().Next(50, 250);
     }
 }
