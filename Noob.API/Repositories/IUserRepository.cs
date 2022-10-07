@@ -5,7 +5,7 @@ namespace Noob.API.Repositories
 {
     public interface IUserRepository
     {
-        User Find(int id);
-        void Update(User user);
+        User Find(ulong id);
+        User Save(User user);
     }
 }

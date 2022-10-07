@@ -21,17 +21,17 @@ namespace Noob.API.Commands
             UserCommandRepository = userCommandRepository;
         }
 
-        public CommandResponse Daily(int userId) =>
+        public CommandResponse Daily(ulong userId) =>
             Recurrent("daily", 1, 1, RandomNibletsDaily, userId);
         
-        public CommandResponse Weekly(int userId) =>
+        public CommandResponse Weekly(ulong userId) =>
             Recurrent("weekly", 7, 2, RandomNibletsWeekly, userId);
 
-        private CommandResponse Recurrent(string kind, int interval, int commandId, Func<int> getNiblets, int userId)
+        private CommandResponse Recurrent(string kind, int interval, int commandId, Func<int> getNiblets, ulong userId)
         {
             User user = UserRepository.Find(userId);
             if (user == null)
-                return CommandResponse.Fail("Your noob could not be found :(");
+                user = new User { Id = userId };
 
             UserCommand userCommand = UserCommandRepository.Find(user.Id, commandId);
             if (userCommand == null)
@@ -41,20 +41,20 @@ namespace Noob.API.Commands
             else
                 ResetCommandTimestamp(userCommand);
 
-            user.Niblets += getNiblets.Invoke();
-            UserRepository.Update(user);
-
-            return CommandResponse.Ok($"You have redeemed your {kind} reward of {user.Niblets} Niblets!");
+            int newNiblets = getNiblets.Invoke();
+            user.Niblets += newNiblets;
+            UserRepository.Save(user);
+            return CommandResponse.Ok($"You have redeemed your {kind} reward of {newNiblets} Niblets!");
         }
 
         private void ResetCommandTimestamp(UserCommand userCommand)
         {
             userCommand.ExecutedAt = DateTime.Now;
-            UserCommandRepository.Update(userCommand);
+            UserCommandRepository.Save(userCommand);
         }
 
         private void CreateNewUserCommand(User user, int commandId) =>
-            UserCommandRepository.Create(new UserCommand
+            UserCommandRepository.Save(new UserCommand
             {
                 UserId = user.Id,
                 CommandId = commandId,

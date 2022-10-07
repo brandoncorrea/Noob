@@ -11,15 +11,6 @@ namespace Noob.API.Test.Commands
         public class DailyCommandTest
         {
             [Test]
-            public void UserDoesNotExist()
-            {
-                var userRepository = new UserRepositoryStub(new List<User>());
-                var response = new RecurrentCommand(userRepository, null).Daily(1);
-                Assert.False(response.Success);
-                Assert.AreEqual("Your noob could not be found :(", response.Message);
-            }
-
-            [Test]
             public void OneHourUntilNextExecution()
             {
                 var user = new User { Id = 2 };
@@ -54,6 +45,22 @@ namespace Noob.API.Test.Commands
 
                 Assert.False(response.Success);
                 Assert.AreEqual("Your daily reward will be ready in 3 hours and 11 minutes!", response.Message);
+            }
+
+            [Test]
+            public void SuccessfullDailyWithMissingUser()
+            {
+                var userRepository = new UserRepositoryStub(new List<User> { });
+                var commandRepository = new UserCommandRepositoryStub(new List<UserCommand>());
+                var response = new RecurrentCommand(userRepository, commandRepository).Daily(2);
+                var command = commandRepository.Find(2, 1);
+                var newUser = userRepository.Find(2);
+
+                Assert.Less(command.ExecutedAt, DateTime.Now.AddSeconds(1));
+                Assert.Greater(command.ExecutedAt, DateTime.Now.AddSeconds(-1));
+                Assert.True(response.Success);
+                Assert.AreEqual($"You have redeemed your daily reward of {newUser.Niblets} Niblets!", response.Message);
+                Assert.Greater(newUser.Niblets, 0);
             }
 
             [Test]
@@ -115,7 +122,7 @@ namespace Noob.API.Test.Commands
                 Assert.Less(updatedCommand.ExecutedAt, DateTime.Now.AddSeconds(1));
                 Assert.Greater(updatedCommand.ExecutedAt, DateTime.Now.AddSeconds(-1));
                 Assert.True(response.Success);
-                Assert.AreEqual($"You have redeemed your daily reward of {user.Niblets} Niblets!", response.Message);
+                Assert.AreEqual($"You have redeemed your daily reward of {user.Niblets - oldNiblets} Niblets!", response.Message);
                 Assert.Greater(user.Niblets, oldNiblets);
             }
         }
@@ -123,15 +130,6 @@ namespace Noob.API.Test.Commands
         [TestFixture]
         public class WeeklyCommandTest
         {
-            [Test]
-            public void UserDoesNotExist()
-            {
-                var userRepository = new UserRepositoryStub(new List<User>());
-                var response = new RecurrentCommand(userRepository, null).Weekly(1);
-                Assert.False(response.Success);
-                Assert.AreEqual("Your noob could not be found :(", response.Message);
-            }
-
             [Test]
             public void OneDayUntilNextExecution()
             {
@@ -167,6 +165,22 @@ namespace Noob.API.Test.Commands
 
                 Assert.False(response.Success);
                 Assert.AreEqual("Your weekly reward will be ready in 3 days, 12 hours, and 3 minutes!", response.Message);
+            }
+
+            [Test]
+            public void SuccessfullWeeklyWithMissingUser()
+            {
+                var userRepository = new UserRepositoryStub(new List<User> { });
+                var commandRepository = new UserCommandRepositoryStub(new List<UserCommand>());
+                var response = new RecurrentCommand(userRepository, commandRepository).Weekly(2);
+                var command = commandRepository.Find(2, 2);
+                var newUser = userRepository.Find(2);
+
+                Assert.Less(command.ExecutedAt, DateTime.Now.AddSeconds(1));
+                Assert.Greater(command.ExecutedAt, DateTime.Now.AddSeconds(-1));
+                Assert.True(response.Success);
+                Assert.AreEqual($"You have redeemed your weekly reward of {newUser.Niblets} Niblets!", response.Message);
+                Assert.GreaterOrEqual(newUser.Niblets, 100);
             }
 
             [Test]
@@ -228,7 +242,7 @@ namespace Noob.API.Test.Commands
                 Assert.Less(updatedCommand.ExecutedAt, DateTime.Now.AddSeconds(1));
                 Assert.Greater(updatedCommand.ExecutedAt, DateTime.Now.AddSeconds(-1));
                 Assert.True(response.Success);
-                Assert.AreEqual($"You have redeemed your weekly reward of {user.Niblets} Niblets!", response.Message);
+                Assert.AreEqual($"You have redeemed your weekly reward of {user.Niblets - oldNiblets} Niblets!", response.Message);
                 Assert.GreaterOrEqual(user.Niblets, oldNiblets + 100);
             }
         }

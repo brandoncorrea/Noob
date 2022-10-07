@@ -15,14 +15,15 @@ namespace Noob.API.Test.Stub
 
         public UserCommandRepositoryStub() => UserCommands = new List<UserCommand>();
 
-        public UserCommand Find(int userId, int commandId) =>
+        public UserCommand Find(ulong userId, int commandId) =>
             UserCommands.FirstOrDefault(command =>
                 command.UserId == userId && command.CommandId == commandId);
 
-        public void Create(UserCommand command) =>
-            UserCommands = UserCommands.Append(command);
-
-        public void Update(UserCommand command) =>
-            Find(command.UserId, command.CommandId).ExecutedAt = command.ExecutedAt;
+        public void Save(UserCommand command) =>
+            UserCommands = UserCommands
+                .Where(c =>
+                    c.CommandId != command.CommandId ||
+                    c.UserId != command.UserId)
+                .Append(command);
     }
 }
