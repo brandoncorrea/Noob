@@ -1,0 +1,19 @@
+﻿[*.cs]
+
+# CS8603: Possible null reference return.
+dotnet_diagnostic.CS8603.severity = silent
+
+# IDE0044: Add readonly modifier
+dotnet_diagnostic.IDE0044.severity = silent
+
+# NUnit2005: Consider using Assert.That(actual, Is.EqualTo(expected)) instead of Assert.AreEqual(expected, actual)
+dotnet_diagnostic.NUnit2005.severity = silent
+
+# CS8625: Cannot convert null literal to non-nullable reference type.
+dotnet_diagnostic.CS8625.severity = silent
+
+# NUnit2001: Consider using Assert.That(expr, Is.False) instead of Assert.False(expr)
+dotnet_diagnostic.NUnit2001.severity = silent
+
+# CS8618: Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+dotnet_diagnostic.CS8618.severity = silent
