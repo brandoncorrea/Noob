@@ -6,6 +6,7 @@ namespace Noob.API.Models
         public ulong Id { get; set; }
         public int BrowniePoints { get; set; }
         public int Niblets { get; set; }
-        public ulong Experience { get; set; }
+        public long Experience { get; set; }
+        public long Level => Experience / 100 + 1;
     }
 }
