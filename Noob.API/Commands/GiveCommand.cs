@@ -1,4 +1,5 @@
 ﻿using System;
+using Discord;
 using Noob.API.Models;
 using Noob.API.Repositories;
 
@@ -10,20 +11,24 @@ namespace Noob.API.Commands
         public GiveCommand(IUserRepository userRepository) =>
             UserRepository = userRepository;
 
-        public CommandResponse Give(ulong fromId, ulong toId, string toMention, int amount)
+        public CommandResponse Give(ISlashCommandInteraction command)
         {
+            IUser discordFrom = command.User;
+            IUser discordTo = (IUser)command.Data.Options.First().Value;
+            int amount = unchecked((int)(long)command.Data.Options.Last().Value);
+
             if (amount < 0)
                 return CommandResponse.Fail("Are you trying to /steal Niblets?");
             else if (amount == 0)
                 return CommandResponse.Fail("How many Niblets do you want to give?");
 
-            User from = UserRepository.FindOrCreate(fromId);
+            User from = UserRepository.FindOrCreate(discordFrom.Id);
             if (amount > from.Niblets)
                 return CommandResponse.Fail("You don't have enough Niblets!");
-            else if (fromId == toId)
+            else if (from.Id == discordTo.Id)
                 return CommandResponse.Ok($"You gave yourself {NibletTerm(amount)}!");
 
-            User to = UserRepository.FindOrCreate(toId);
+            User to = UserRepository.FindOrCreate(discordTo.Id);
             int earnedBrowniePoints = amount / 5;
 
             from.Niblets -= amount;
@@ -33,7 +38,7 @@ namespace Noob.API.Commands
             UserRepository.Save(to);
 
             var phraseEnding = earnedBrowniePoints == 0 ? "!" : $", earning yourself {BrownieTerm(earnedBrowniePoints)} :)";
-            return CommandResponse.Ok($"You gave {toMention} {NibletTerm(amount)}{phraseEnding}");
+            return CommandResponse.Ok($"You gave {discordTo.Username} {NibletTerm(amount)}{phraseEnding}");
         }
 
         private static string NibletTerm(int niblets) =>

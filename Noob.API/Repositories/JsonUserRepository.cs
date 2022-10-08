@@ -22,8 +22,20 @@ namespace Noob.API.Repositories
         public User Save(User user)
         {
             Users = Users.Where(u => u.Id != user.Id).Append(user);
-            File.WriteAllText(FilePath, JsonConvert.SerializeObject(Users));
+            Commit();
             return user;
         }
+
+        public User Delete(ulong id)
+        {
+            var found = Find(id);
+            if (found == null) return null;
+            Users = Users.Where(u => u.Id != id);
+            Commit();
+            return found;
+        }
+
+        private void Commit() =>
+            File.WriteAllText(FilePath, JsonConvert.SerializeObject(Users));
     }
 }

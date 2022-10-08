@@ -7,7 +7,9 @@ namespace Noob.API.Repositories
     {
         User Find(ulong id);
         User Save(User user);
+        User Delete(ulong id);
 
+        User Delete(User user) => Delete(user.Id);
         User Reload(User user) => Find(user.Id);
         User FindOrCreate(ulong id)
         {

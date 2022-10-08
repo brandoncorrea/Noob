@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Design;
+using Discord;
 using Noob.API.Extensions;
 using Noob.API.Helpers;
 using Noob.API.Models;
@@ -20,15 +21,15 @@ namespace Noob.API.Commands
             UserCommandRepository = userCommandRepository;
         }
 
-        public CommandResponse Daily(ulong userId) =>
-            Recurrent("daily", 1, 1, RandomNibletsDaily, userId);
+        public CommandResponse Daily(ISlashCommandInteraction command) =>
+            Recurrent("daily", 1, 1, RandomNibletsDaily, command);
         
-        public CommandResponse Weekly(ulong userId) =>
-            Recurrent("weekly", 7, 2, RandomNibletsWeekly, userId);
+        public CommandResponse Weekly(ISlashCommandInteraction command) =>
+            Recurrent("weekly", 7, 2, RandomNibletsWeekly, command);
 
-        private CommandResponse Recurrent(string kind, int interval, int commandId, Func<int> getNiblets, ulong userId)
+        private CommandResponse Recurrent(string kind, int interval, int commandId, Func<int> getNiblets, ISlashCommandInteraction command)
         {
-            User user = UserRepository.FindOrCreate(userId);
+            User user = UserRepository.FindOrCreate(command.User.Id);
             UserCommand userCommand = UserCommandRepository.Find(user.Id, commandId);
 
             if (userCommand == null)

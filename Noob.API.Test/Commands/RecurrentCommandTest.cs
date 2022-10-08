@@ -1,29 +1,26 @@
 ﻿
+using Discord;
 using Noob.API.Commands;
 using Noob.API.Models;
 using Noob.API.Test.Stub;
 
 namespace Noob.API.Test.Commands
 {
+    [TestFixture]
     public class RecurrentCommandTest
     {
         [TestFixture]
         public class DailyCommandTest
         {
+            [SetUp]
+            public void SetUp() => Noobs.Initialize();
+
             [Test]
             public void OneHourUntilNextExecution()
             {
-                var user = new User { Id = 2 };
-                var command = new UserCommand
-                {
-                    CommandId = 1,
-                    UserId = 2,
-                    ExecutedAt = DateTime.Now.AddHours(-23).AddMinutes(1)
-                };
-
-                var userRepository = new UserRepositoryStub(new List<User> { user });
-                var commandRepository = new UserCommandRepositoryStub(new List<UserCommand> { command });
-                var response = new RecurrentCommand(userRepository, commandRepository).Daily(2);
+                var thing = Noobs.BillDaily;
+                thing.ExecutedAt = DateTime.Now.AddHours(-23).AddMinutes(1);
+                var response = ExecuteDaily(Noobs.BillDiscord);
                 Assert.False(response.Success);
                 Assert.AreEqual("Your daily reward will be ready in 1 hour!", response.Message);
             }
@@ -31,18 +28,8 @@ namespace Noob.API.Test.Commands
             [Test]
             public void ThreeHoursTwelveMinutesUntilNextExecution()
             {
-                var user = new User { Id = 2 };
-                var command = new UserCommand
-                {
-                    CommandId = 1,
-                    UserId = 2,
-                    ExecutedAt = DateTime.Now.AddHours(3).AddMinutes(12).AddDays(-1)
-                };
-
-                var userRepository = new UserRepositoryStub(new List<User> { user });
-                var commandRepository = new UserCommandRepositoryStub(new List<UserCommand> { command });
-                var response = new RecurrentCommand(userRepository, commandRepository).Daily(2);
-
+                Noobs.BillDaily.ExecutedAt = DateTime.Now.AddHours(3).AddMinutes(12).AddDays(-1);
+                var response = ExecuteDaily(Noobs.BillDiscord);
                 Assert.False(response.Success);
                 Assert.AreEqual("Your daily reward will be ready in 3 hours and 11 minutes!", response.Message);
             }
@@ -50,100 +37,74 @@ namespace Noob.API.Test.Commands
             [Test]
             public void SuccessfullDailyWithMissingUser()
             {
-                var userRepository = new UserRepositoryStub(new List<User> { });
-                var commandRepository = new UserCommandRepositoryStub(new List<UserCommand>());
-                var response = new RecurrentCommand(userRepository, commandRepository).Daily(2);
-                var command = commandRepository.Find(2, 1);
-                var newUser = userRepository.Find(2);
+                Noobs.UserRepository.Delete(Noobs.Bill);
+                Noobs.UserCommandRepository.Delete(Noobs.BillDaily);
+                var response = ExecuteDaily(Noobs.BillDiscord);
+                var billDaily = Noobs.UserCommandRepository.Find(Noobs.Bill.Id, 1);
 
-                Assert.Less(command.ExecutedAt, DateTime.Now.AddSeconds(1));
-                Assert.Greater(command.ExecutedAt, DateTime.Now.AddSeconds(-1));
+                Assert.Less(billDaily.ExecutedAt, DateTime.Now.AddSeconds(1));
+                Assert.Greater(billDaily.ExecutedAt, DateTime.Now.AddSeconds(-1));
                 Assert.True(response.Success);
-                Assert.AreEqual($"You have redeemed your daily reward of {newUser.Niblets} Niblets!", response.Message);
-                Assert.Greater(newUser.Niblets, 0);
+                Assert.AreEqual($"You have redeemed your daily reward of {Noobs.Bill.Niblets} Niblets!", response.Message);
+                Assert.Greater(Noobs.Bill.Niblets, 0);
             }
 
             [Test]
             public void SuccessfullDailyWithMissingUserCommand()
             {
-                var user = new User { Id = 2 };
-                var userRepository = new UserRepositoryStub(new List<User> { user });
-                var commandRepository = new UserCommandRepositoryStub(new List<UserCommand>());
-                var response = new RecurrentCommand(userRepository, commandRepository).Daily(2);
-                var command = commandRepository.Find(2, 1);
+                Noobs.UserCommandRepository.Delete(Noobs.BillDaily);
+                var response = ExecuteDaily(Noobs.BillDiscord);
 
-                Assert.Less(command.ExecutedAt, DateTime.Now.AddSeconds(1));
-                Assert.Greater(command.ExecutedAt, DateTime.Now.AddSeconds(-1));
+                Assert.Less(Noobs.BillDaily.ExecutedAt, DateTime.Now.AddSeconds(1));
+                Assert.Greater(Noobs.BillDaily.ExecutedAt, DateTime.Now.AddSeconds(-1));
                 Assert.True(response.Success);
-                Assert.AreEqual($"You have redeemed your daily reward of {user.Niblets} Niblets!", response.Message);
-                Assert.Greater(user.Niblets, 0);
+                Assert.AreEqual($"You have redeemed your daily reward of {Noobs.Bill.Niblets} Niblets!", response.Message);
+                Assert.Greater(Noobs.Bill.Niblets, 0);
             }
 
             [Test]
             public void SuccessfullDailyWithExistingUserCommand()
             {
-                var user = new User { Id = 3 };
-                var command = new UserCommand
-                {
-                    CommandId = 1,
-                    UserId = 3,
-                    ExecutedAt = DateTime.Now.AddHours(-44)
-                };
-
-                var userRepository = new UserRepositoryStub(new List<User> { user });
-                var commandRepository = new UserCommandRepositoryStub(new List<UserCommand> { command });
-                var response = new RecurrentCommand(userRepository, commandRepository).Daily(3);
-                var updatedCommand = commandRepository.Find(3, 1);
-
-                Assert.Less(updatedCommand.ExecutedAt, DateTime.Now.AddSeconds(1));
-                Assert.Greater(updatedCommand.ExecutedAt, DateTime.Now.AddSeconds(-1));
+                Noobs.BillDaily.ExecutedAt = DateTime.Now.AddHours(-44);
+                var response = ExecuteDaily(Noobs.BillDiscord);
+                Assert.Less(Noobs.BillDaily.ExecutedAt, DateTime.Now.AddSeconds(1));
+                Assert.Greater(Noobs.BillDaily.ExecutedAt, DateTime.Now.AddSeconds(-1));
                 Assert.True(response.Success);
-                Assert.AreEqual($"You have redeemed your daily reward of {user.Niblets} Niblets!", response.Message);
-                Assert.Greater(user.Niblets, 0);
+                Assert.AreEqual($"You have redeemed your daily reward of {Noobs.Bill.Niblets} Niblets!", response.Message);
+                Assert.Greater(Noobs.Bill.Niblets, 0);
             }
 
             [Test]
             public void SuccessfullDailyWhenUserAlreadyHasNiblets()
             {
-                var oldNiblets = 15;
-                var user = new User { Id = 3, Niblets = oldNiblets };
-                var command = new UserCommand
-                {
-                    CommandId = 1,
-                    UserId = 3,
-                    ExecutedAt = DateTime.Now.AddHours(-44)
-                };
-
-                var userRepository = new UserRepositoryStub(new List<User> { user });
-                var commandRepository = new UserCommandRepositoryStub(new List<UserCommand> { command });
-                var response = new RecurrentCommand(userRepository, commandRepository).Daily(3);
-                var updatedCommand = commandRepository.Find(3, 1);
-
-                Assert.Less(updatedCommand.ExecutedAt, DateTime.Now.AddSeconds(1));
-                Assert.Greater(updatedCommand.ExecutedAt, DateTime.Now.AddSeconds(-1));
+                Noobs.Bill.Niblets = 15;
+                Noobs.BillDaily.ExecutedAt = DateTime.Now.AddHours(-44);
+                var response = ExecuteDaily(Noobs.BillDiscord);
+                Assert.Less(Noobs.BillDaily.ExecutedAt, DateTime.Now.AddSeconds(1));
+                Assert.Greater(Noobs.BillDaily.ExecutedAt, DateTime.Now.AddSeconds(-1));
                 Assert.True(response.Success);
-                Assert.AreEqual($"You have redeemed your daily reward of {user.Niblets - oldNiblets} Niblets!", response.Message);
-                Assert.Greater(user.Niblets, oldNiblets);
+                Assert.AreEqual($"You have redeemed your daily reward of {Noobs.Bill.Niblets - 15} Niblets!", response.Message);
+                Assert.Greater(Noobs.Bill.Niblets, 15);
             }
+
+            private CommandResponse ExecuteDaily(IUser user) =>
+                new RecurrentCommand(
+                    Noobs.UserRepository,
+                    Noobs.UserCommandRepository)
+                    .Daily(new InteractionStub(user));
         }
 
         [TestFixture]
         public class WeeklyCommandTest
         {
+            [SetUp]
+            public void SetUp() => Noobs.Initialize();
+
             [Test]
             public void OneDayUntilNextExecution()
             {
-                var user = new User { Id = 2 };
-                var command = new UserCommand
-                {
-                    CommandId = 2,
-                    UserId = 2,
-                    ExecutedAt = DateTime.Now.AddDays(-6).AddMinutes(1)
-                };
-
-                var userRepository = new UserRepositoryStub(new List<User> { user });
-                var commandRepository = new UserCommandRepositoryStub(new List<UserCommand> { command });
-                var response = new RecurrentCommand(userRepository, commandRepository).Weekly(2);
+                Noobs.TedWeekly.ExecutedAt = DateTime.Now.AddDays(-6).AddMinutes(1);
+                var response = ExecuteWeekly(Noobs.TedDiscord);
                 Assert.False(response.Success);
                 Assert.AreEqual("Your weekly reward will be ready in 1 day!", response.Message);
             }
@@ -151,18 +112,8 @@ namespace Noob.API.Test.Commands
             [Test]
             public void ThreeDaysTwelveHoursFourMinutesUntilNextExecution()
             {
-                var user = new User { Id = 2 };
-                var command = new UserCommand
-                {
-                    CommandId = 2,
-                    UserId = 2,
-                    ExecutedAt = DateTime.Now.AddDays(3).AddHours(12).AddMinutes(4).AddDays(-7)
-                };
-
-                var userRepository = new UserRepositoryStub(new List<User> { user });
-                var commandRepository = new UserCommandRepositoryStub(new List<UserCommand> { command });
-                var response = new RecurrentCommand(userRepository, commandRepository).Weekly(2);
-
+                Noobs.TedWeekly.ExecutedAt = DateTime.Now.AddDays(3).AddHours(12).AddMinutes(4).AddDays(-7);
+                var response = ExecuteWeekly(Noobs.TedDiscord);
                 Assert.False(response.Success);
                 Assert.AreEqual("Your weekly reward will be ready in 3 days, 12 hours, and 3 minutes!", response.Message);
             }
@@ -170,81 +121,58 @@ namespace Noob.API.Test.Commands
             [Test]
             public void SuccessfullWeeklyWithMissingUser()
             {
-                var userRepository = new UserRepositoryStub(new List<User> { });
-                var commandRepository = new UserCommandRepositoryStub(new List<UserCommand>());
-                var response = new RecurrentCommand(userRepository, commandRepository).Weekly(2);
-                var command = commandRepository.Find(2, 2);
-                var newUser = userRepository.Find(2);
-
-                Assert.Less(command.ExecutedAt, DateTime.Now.AddSeconds(1));
-                Assert.Greater(command.ExecutedAt, DateTime.Now.AddSeconds(-1));
+                Noobs.UserRepository.Delete(Noobs.Ted);
+                Noobs.UserCommandRepository.Delete(Noobs.TedWeekly);
+                var response = ExecuteWeekly(Noobs.TedDiscord);
+                Assert.Less(Noobs.TedWeekly.ExecutedAt, DateTime.Now.AddSeconds(1));
+                Assert.Greater(Noobs.TedWeekly.ExecutedAt, DateTime.Now.AddSeconds(-1));
                 Assert.True(response.Success);
-                Assert.AreEqual($"You have redeemed your weekly reward of {newUser.Niblets} Niblets!", response.Message);
-                Assert.GreaterOrEqual(newUser.Niblets, 50);
+                Assert.AreEqual($"You have redeemed your weekly reward of {Noobs.Ted.Niblets} Niblets!", response.Message);
+                Assert.GreaterOrEqual(Noobs.Ted.Niblets, 50);
             }
 
             [Test]
             public void SuccessfullDailyWithMissingUserCommand()
             {
-                var user = new User { Id = 2 };
-                var userRepository = new UserRepositoryStub(new List<User> { user });
-                var commandRepository = new UserCommandRepositoryStub(new List<UserCommand>());
-                var response = new RecurrentCommand(userRepository, commandRepository).Weekly(2);
-                var command = commandRepository.Find(2, 2);
-
-                Assert.Less(command.ExecutedAt, DateTime.Now.AddSeconds(1));
-                Assert.Greater(command.ExecutedAt, DateTime.Now.AddSeconds(-1));
+                Noobs.UserCommandRepository.Delete(Noobs.TedWeekly);
+                var response = ExecuteWeekly(Noobs.TedDiscord);
+                Assert.Less(Noobs.TedWeekly.ExecutedAt, DateTime.Now.AddSeconds(1));
+                Assert.Greater(Noobs.TedWeekly.ExecutedAt, DateTime.Now.AddSeconds(-1));
                 Assert.True(response.Success);
-                Assert.AreEqual($"You have redeemed your weekly reward of {user.Niblets} Niblets!", response.Message);
-                Assert.GreaterOrEqual(user.Niblets, 50);
+                Assert.AreEqual($"You have redeemed your weekly reward of {Noobs.Ted.Niblets} Niblets!", response.Message);
+                Assert.GreaterOrEqual(Noobs.Ted.Niblets, 50);
             }
 
             [Test]
             public void SuccessfullDailyWithExistingUserCommand()
             {
-                var user = new User { Id = 3 };
-                var command = new UserCommand
-                {
-                    CommandId = 2,
-                    UserId = 3,
-                    ExecutedAt = DateTime.Now.AddDays(-8)
-                };
-
-                var userRepository = new UserRepositoryStub(new List<User> { user });
-                var commandRepository = new UserCommandRepositoryStub(new List<UserCommand> { command });
-                var response = new RecurrentCommand(userRepository, commandRepository).Weekly(3);
-                var updatedCommand = commandRepository.Find(3, 2);
-
-                Assert.Less(updatedCommand.ExecutedAt, DateTime.Now.AddSeconds(1));
-                Assert.Greater(updatedCommand.ExecutedAt, DateTime.Now.AddSeconds(-1));
+                Noobs.TedWeekly.ExecutedAt = DateTime.Now.AddDays(-8);
+                var response = ExecuteWeekly(Noobs.TedDiscord);
+                Assert.Less(Noobs.TedWeekly.ExecutedAt, DateTime.Now.AddSeconds(1));
+                Assert.Greater(Noobs.TedWeekly.ExecutedAt, DateTime.Now.AddSeconds(-1));
                 Assert.True(response.Success);
-                Assert.AreEqual($"You have redeemed your weekly reward of {user.Niblets} Niblets!", response.Message);
-                Assert.GreaterOrEqual(user.Niblets, 50);
+                Assert.AreEqual($"You have redeemed your weekly reward of {Noobs.Ted.Niblets} Niblets!", response.Message);
+                Assert.GreaterOrEqual(Noobs.Ted.Niblets, 50);
             }
 
             [Test]
             public void SuccessfullDailyWhenUserAlreadyHasNiblets()
             {
-                var oldNiblets = 17;
-                var user = new User { Id = 3, Niblets = oldNiblets };
-                var command = new UserCommand
-                {
-                    CommandId = 2,
-                    UserId = 3,
-                    ExecutedAt = DateTime.Now.AddDays(-8)
-                };
-
-                var userRepository = new UserRepositoryStub(new List<User> { user });
-                var commandRepository = new UserCommandRepositoryStub(new List<UserCommand> { command });
-                var response = new RecurrentCommand(userRepository, commandRepository).Weekly(3);
-                var updatedCommand = commandRepository.Find(3, 2);
-
-                Assert.Less(updatedCommand.ExecutedAt, DateTime.Now.AddSeconds(1));
-                Assert.Greater(updatedCommand.ExecutedAt, DateTime.Now.AddSeconds(-1));
+                Noobs.Ted.Niblets = 17;
+                Noobs.TedWeekly.ExecutedAt = DateTime.Now.AddDays(-8);
+                var response = ExecuteWeekly(Noobs.TedDiscord);
+                Assert.Less(Noobs.TedWeekly.ExecutedAt, DateTime.Now.AddSeconds(1));
+                Assert.Greater(Noobs.TedWeekly.ExecutedAt, DateTime.Now.AddSeconds(-1));
                 Assert.True(response.Success);
-                Assert.AreEqual($"You have redeemed your weekly reward of {user.Niblets - oldNiblets} Niblets!", response.Message);
-                Assert.GreaterOrEqual(user.Niblets, oldNiblets + 50);
+                Assert.AreEqual($"You have redeemed your weekly reward of {Noobs.Ted.Niblets - 17} Niblets!", response.Message);
+                Assert.GreaterOrEqual(Noobs.Ted.Niblets, 67);
             }
+
+            private CommandResponse ExecuteWeekly(IUser user) =>
+                new RecurrentCommand(
+                    Noobs.UserRepository,
+                    Noobs.UserCommandRepository)
+                    .Weekly(new InteractionStub(user));
         }
     }
 }

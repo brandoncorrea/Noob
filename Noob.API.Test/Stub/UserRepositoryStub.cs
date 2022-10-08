@@ -16,6 +16,13 @@ namespace Noob.API.Test.Stub
             return user;
         }
 
+        public User Delete(ulong id)
+        {
+            var user = Find(id);
+            Users = Users.Where(u => u.Id != id);
+            return user;
+        }
+
         public User Find(ulong id) => Users.FirstOrDefault(i => i.Id == id);
         public User Save(User user)
         {

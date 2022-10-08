@@ -27,8 +27,23 @@ namespace Noob.API.Repositories
                     c.CommandId != command.CommandId ||
                     c.UserId != command.UserId)
                 .Append(command);
-            File.WriteAllText(FilePath, JsonConvert.SerializeObject(UserCommands));
+            Commit();
         }
+
+        public UserCommand Delete(ulong userId, int commandId)
+        {
+            var command = Find(userId, commandId);
+            if (command == null) return null;
+            UserCommands = UserCommands
+                .Where(c =>
+                    c.CommandId != command.CommandId ||
+                    c.UserId != command.UserId);
+            Commit();
+            return command;
+        }
+
+        private void Commit() =>
+            File.WriteAllText(FilePath, JsonConvert.SerializeObject(UserCommands));
     }
 }
 

@@ -25,5 +25,14 @@ namespace Noob.API.Test.Stub
                     c.CommandId != command.CommandId ||
                     c.UserId != command.UserId)
                 .Append(command);
+
+        public UserCommand Delete(ulong userId, int commandId)
+        {
+            var found = Find(userId, commandId);
+            UserCommands = UserCommands
+                .Where(c => c.CommandId != commandId || c.UserId != userId);
+            return found;
+        }
+            
     }
 }

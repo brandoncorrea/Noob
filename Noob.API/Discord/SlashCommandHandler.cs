@@ -80,15 +80,11 @@ namespace Noob.API.Discord
         }
 
         private async Task HandleDaily(ISlashCommandInteraction command) =>
-            await command.RespondAsync(RecurrentCommandHandler.Daily(command.User.Id).Message);
+            await command.RespondAsync(RecurrentCommandHandler.Daily(command).Message);
         private async Task HandleWeekly(ISlashCommandInteraction command) =>
-            await command.RespondAsync(RecurrentCommandHandler.Weekly(command.User.Id).Message);
-        private async Task HandleGive(ISlashCommandInteraction command)
-        {
-            IUser to = (IUser)command.Data.Options.First().Value;
-            int amount = unchecked((int)(long)command.Data.Options.Last().Value);
-            await command.RespondAsync(GiveCommandHandler.Give(command.User.Id, to.Id, to.Mention, amount).Message);
-        }
+            await command.RespondAsync(RecurrentCommandHandler.Weekly(command).Message);
+        private async Task HandleGive(ISlashCommandInteraction command) =>
+            await command.RespondAsync(GiveCommandHandler.Give(command).Message);
 
         public async Task RegisterGuild(SocketGuild guild)
         {
