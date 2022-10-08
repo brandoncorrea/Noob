@@ -9,21 +9,16 @@ namespace Noob.API.Discord
     public class SlashCommandHandler
     {
         private IEnumerable<SlashCommandProperties> SlashCommands;
-        private Dictionary<string, Func<ISlashCommandInteraction, CommandResponse>> Handlers;
+        private RecurrentCommand RecurrentCommandHandler;
+        private GiveCommand GiveCommandHandler;
 
         public SlashCommandHandler(
             IUserRepository userRepository,
             IUserCommandRepository userCommandRepository)
         {
-            var recurrentCommandHandler = new RecurrentCommand(userRepository, userCommandRepository);
-            var giveCommandHandler = new GiveCommand(userRepository);
+            RecurrentCommandHandler = new RecurrentCommand(userRepository, userCommandRepository);
+            GiveCommandHandler = new GiveCommand(userRepository);
             SlashCommands = CreateSlashCommands();
-            Handlers = new Dictionary<string, Func<ISlashCommandInteraction, CommandResponse>>
-            {
-                { "daily", recurrentCommandHandler.Daily },
-                { "weekly", recurrentCommandHandler.Weekly },
-                { "give", giveCommandHandler.Give },
-            };
         }
 
         public static IEnumerable<SlashCommandProperties> CreateSlashCommands() =>
@@ -70,9 +65,18 @@ namespace Noob.API.Discord
 
         public async Task Handle(ISlashCommandInteraction command)
         {
-            var handler = Handlers[command.Data.Name];
-            if (handler == null) return;
-            await command.RespondAsync(handler.Invoke(command).Message);
+            switch (command.Data.Name)
+            {
+                case "daily":
+                    await command.RespondAsync(RecurrentCommandHandler.Daily(command).Message);
+                    break;
+                case "weekly":
+                    await command.RespondAsync(RecurrentCommandHandler.Weekly(command).Message);
+                    break;
+                case "give":
+                    await GiveCommandHandler.Give(command);
+                    break;
+            }
         }
 
         public async Task RegisterGuild(SocketGuild guild)

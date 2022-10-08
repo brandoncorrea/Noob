@@ -46,6 +46,18 @@ namespace Noob.API.Test.Stub
                 .ToList<IApplicationCommandInteractionDataOption>();
     }
 
+    public class RespondAsyncParams
+    {
+        public string Text { get; set; }
+        public Embed[] Embeds { get; set; }
+        public Embed Embed { get; set; }
+        public bool IsTTS { get; set; }
+        public bool Ephemeral { get; set; }
+        public AllowedMentions AllowedMentions { get; set; }
+        public MessageComponent Components { get; set; }
+        public RequestOptions Options { get; set; }
+    }
+
     public class InteractionStub : ISlashCommandInteraction
     {
         public ulong Id { get; set; }
@@ -65,6 +77,8 @@ namespace Noob.API.Test.Stub
         public DiscordInteractionDataStub _Data { get; set; }
         public IApplicationCommandInteractionData Data => _Data;
         IDiscordInteractionData IDiscordInteraction.Data => _Data;
+
+        public RespondAsyncParams RespondAsyncParams;
 
         public InteractionStub()
         {
@@ -114,7 +128,18 @@ namespace Noob.API.Test.Stub
 
         public Task RespondAsync(string text = null, Embed[] embeds = null, bool isTTS = false, bool ephemeral = false, AllowedMentions allowedMentions = null, MessageComponent components = null, Embed embed = null, RequestOptions options = null)
         {
-            throw new NotImplementedException();
+            RespondAsyncParams = new RespondAsyncParams
+            {
+                Text = text,
+                Embeds = embeds,
+                IsTTS = isTTS,
+                Ephemeral = ephemeral,
+                AllowedMentions = allowedMentions,
+                Components = components,
+                Embed = embed,
+                Options = options
+            };
+            return Task.CompletedTask;
         }
 
         public Task RespondWithFilesAsync(IEnumerable<FileAttachment> attachments, string text = null, Embed[] embeds = null, bool isTTS = false, bool ephemeral = false, AllowedMentions allowedMentions = null, MessageComponent components = null, Embed embed = null, RequestOptions options = null)
