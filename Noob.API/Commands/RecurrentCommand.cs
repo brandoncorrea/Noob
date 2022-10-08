@@ -36,7 +36,7 @@ namespace Noob.API.Commands
                 CreateNewUserCommand(user, commandId);
             else if (userCommand.ExecutedAt.LessThanDaysAgo(interval))
             {
-                await command.RespondAsync($"Your {kind} reward will be ready in {Formatting.TimeFromNow(userCommand.ExecutedAt.AddDays(interval))}!");
+                await command.RespondAsync($"Your {kind} reward will be ready in {Formatting.TimeFromNow(userCommand.ExecutedAt.AddDays(interval))}!", ephemeral: true);
                 return;
             }
             else 
@@ -45,7 +45,7 @@ namespace Noob.API.Commands
             int newNiblets = getNiblets.Invoke();
             user.Niblets += newNiblets;
             UserRepository.Save(user);
-            await command.RespondAsync($"You have redeemed your {kind} reward of {newNiblets} Niblets!");
+            await command.RespondAsync($"{command.User.Username} received {newNiblets} Niblets!");
         }
 
         private void ResetCommandTimestamp(UserCommand userCommand)
