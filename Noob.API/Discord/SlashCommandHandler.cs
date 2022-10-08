@@ -11,6 +11,7 @@ namespace Noob.API.Discord
         private IEnumerable<SlashCommandProperties> SlashCommands;
         private RecurrentCommand RecurrentCommandHandler;
         private GiveCommand GiveCommandHandler;
+        private StealCommand StealCommandHandler;
 
         public SlashCommandHandler(
             IUserRepository userRepository,
@@ -18,6 +19,7 @@ namespace Noob.API.Discord
         {
             RecurrentCommandHandler = new RecurrentCommand(userRepository, userCommandRepository);
             GiveCommandHandler = new GiveCommand(userRepository);
+            StealCommandHandler = new StealCommand(userRepository);
             SlashCommands = CreateSlashCommands();
         }
 
@@ -36,7 +38,7 @@ namespace Noob.API.Discord
                 ),
                 (
                     "give",
-                    "Give Niblets to another player!",
+                    "Give Niblets to another player, earning yourself Brownie Points!",
                     new List<SlashCommandOptionBuilder>()
                     {
                         new SlashCommandOptionBuilder
@@ -51,6 +53,20 @@ namespace Noob.API.Discord
                             Name = "amount",
                             Description = "The number of Niblets to give.",
                             Type = ApplicationCommandOptionType.Integer,
+                            IsRequired = true,
+                        }
+                    }
+                ),
+                (
+                    "steal",
+                    "Steal Niblets from another player!",
+                    new List<SlashCommandOptionBuilder>()
+                    {
+                        new SlashCommandOptionBuilder
+                        {
+                            Name = "victim",
+                            Description = "The person you will be stealing from.",
+                            Type = ApplicationCommandOptionType.User,
                             IsRequired = true,
                         }
                     }
@@ -75,6 +91,9 @@ namespace Noob.API.Discord
                     break;
                 case "give":
                     await GiveCommandHandler.Give(command);
+                    break;
+                case "steal":
+                    await StealCommandHandler.Steal(command);
                     break;
             }
         }

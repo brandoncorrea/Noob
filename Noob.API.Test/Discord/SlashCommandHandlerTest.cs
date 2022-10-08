@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Linq;
 using Discord;
 using Noob.API.Discord;
 
@@ -23,7 +24,7 @@ namespace Noob.API.Test.Discord
         [Test]
         public void CreatesGiveCommand()
         {
-            var command = FindCommand("give", "Give Niblets to another player!");
+            var command = FindCommand("give", "Give Niblets to another player, earning yourself Brownie Points!");
 
             var recipientOption = command.Options.Value.First();
             Assert.AreEqual("recipient", recipientOption.Name);
@@ -36,6 +37,18 @@ namespace Noob.API.Test.Discord
             Assert.AreEqual("The number of Niblets to give.", amountOption.Description);
             Assert.AreEqual(ApplicationCommandOptionType.Integer, amountOption.Type);
             Assert.IsTrue(amountOption.IsRequired);
+        }
+
+        [Test]
+        public void CreatesStealCommand()
+        {
+            var command = FindCommand("steal", "Steal Niblets from another player!");
+            var victimOption = command.Options.Value.First();
+
+            Assert.AreEqual("victim", victimOption.Name);
+            Assert.AreEqual("The person you will be stealing from.", victimOption.Description);
+            Assert.AreEqual(ApplicationCommandOptionType.User, victimOption.Type);
+            Assert.IsTrue(victimOption.IsRequired);
         }
 
         private SlashCommandProperties FindCommand(string name, string description) =>
