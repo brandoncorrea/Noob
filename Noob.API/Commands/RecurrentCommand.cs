@@ -9,7 +9,6 @@ namespace Noob.API.Commands
 {
     public class RecurrentCommand
     {
-        private const int DailyCommandId = 1;
         private IUserRepository UserRepository { get; set; }
         private IUserCommandRepository UserCommandRepository { get; set; }
 
@@ -29,11 +28,9 @@ namespace Noob.API.Commands
 
         private CommandResponse Recurrent(string kind, int interval, int commandId, Func<int> getNiblets, ulong userId)
         {
-            User user = UserRepository.Find(userId);
-            if (user == null)
-                user = new User { Id = userId };
-
+            User user = UserRepository.FindOrCreate(userId);
             UserCommand userCommand = UserCommandRepository.Find(user.Id, commandId);
+
             if (userCommand == null)
                 CreateNewUserCommand(user, commandId);
             else if (userCommand.ExecutedAt.LessThanDaysAgo(interval))

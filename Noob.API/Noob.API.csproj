@@ -12,12 +12,16 @@
     <None Remove="Helpers\" />
     <None Remove="Discord.Net" />
     <None Remove="db\" />
+    <None Remove="Discord\" />
+    <None Remove="Commands\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Repositories\" />
     <Folder Include="Models\" />
     <Folder Include="Helpers\" />
     <Folder Include="db\" />
+    <Folder Include="Discord\" />
+    <Folder Include="Commands\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="3.8.1" />

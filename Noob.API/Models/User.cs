@@ -6,5 +6,6 @@ namespace Noob.API.Models
         public ulong Id { get; set; }
         public int BrowniePoints { get; set; }
         public int Niblets { get; set; }
+        public ulong Experience { get; set; }
     }
 }

@@ -7,5 +7,14 @@ namespace Noob.API.Repositories
     {
         User Find(ulong id);
         User Save(User user);
+
+        User Reload(User user) => Find(user.Id);
+        User FindOrCreate(ulong id)
+        {
+            User user = Find(id);
+            if (user == null)
+                user = Save(new User { Id = id });
+            return user;
+        }
     }
 }
