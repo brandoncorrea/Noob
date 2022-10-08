@@ -13,21 +13,20 @@ namespace Noob.API.Commands
 
         public async Task Give(ISlashCommandInteraction command)
         {
-            IUser discordFrom = command.User;
             IUser discordTo = (IUser)command.Data.Options.First().Value;
             int amount = unchecked((int)(long)command.Data.Options.Last().Value);
 
             if (amount < 0)
-                await command.RespondAsync("Are you trying to /steal Niblets?");
+                await command.RespondAsync("Are you trying to /steal Niblets?", ephemeral: true);
             else if (amount == 0)
-                await command.RespondAsync("How many Niblets do you want to give?");
+                await command.RespondAsync("How many Niblets do you want to give?", ephemeral: true);
             else
             {
-                User from = UserRepository.FindOrCreate(discordFrom.Id);
+                User from = UserRepository.FindOrCreate(command.User.Id);
                 if (amount > from.Niblets)
-                    await command.RespondAsync("You don't have enough Niblets!");
+                    await command.RespondAsync("You don't have enough Niblets!", ephemeral: true);
                 else if (from.Id == discordTo.Id)
-                    await command.RespondAsync($"You gave yourself {NibletTerm(amount)}!");
+                    await command.RespondAsync($"{command.User.Username} gave themself {NibletTerm(amount)}!");
                 else
                 {
                     User to = UserRepository.FindOrCreate(discordTo.Id);
@@ -39,8 +38,8 @@ namespace Noob.API.Commands
                     UserRepository.Save(from);
                     UserRepository.Save(to);
 
-                    var phraseEnding = earnedBrowniePoints == 0 ? "!" : $", earning yourself {BrownieTerm(earnedBrowniePoints)} :)";
-                    await command.RespondAsync($"You gave {discordTo.Username} {NibletTerm(amount)}{phraseEnding}");
+                    var phraseEnding = earnedBrowniePoints == 0 ? "!" : $", earning {BrownieTerm(earnedBrowniePoints)} :)";
+                    await command.RespondAsync($"{command.User.Username} gave {discordTo.Username} {NibletTerm(amount)}{phraseEnding}");
                 }
             }
         }
