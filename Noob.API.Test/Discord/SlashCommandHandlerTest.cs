@@ -19,7 +19,9 @@ namespace Noob.API.Test.Discord
         {
             Assert.IsNotNull(FindCommand("daily", "Redeem your daily Niblets!"));
             Assert.IsNotNull(FindCommand("weekly", "Redeem your weekly Niblets!"));
+            Assert.IsNotNull(FindCommand("stats", "View your player stats."));
         }
+
 
         [Test]
         public void CreatesGiveCommand()

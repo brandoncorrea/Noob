@@ -9,8 +9,8 @@ namespace Noob.API.Test.Stub
     {
         public static User Bill => UserRepository.Find(1);
         public static User Ted => UserRepository.Find(2);
-        public static IUser BillDiscord;
-        public static IUser TedDiscord;
+        public static DiscordUserStub BillDiscord;
+        public static DiscordUserStub TedDiscord;
         public static UserCommand BillDaily => UserCommandRepository.Find(1, 1);
         public static UserCommand TedWeekly => UserCommandRepository.Find(2, 2);
         public static IUserRepository UserRepository;
@@ -26,8 +26,8 @@ namespace Noob.API.Test.Stub
             var tedWeekly = new UserCommand { UserId = ted.Id, CommandId = 2 };
             UserCommandRepository = new UserCommandRepositoryStub(new List<UserCommand> { billDaily, tedWeekly });
 
-            BillDiscord = new DiscordUserStub(bill.Id, "Bill");
-            TedDiscord = new DiscordUserStub(ted.Id, "Ted");
+            BillDiscord = new DiscordUserStub(bill.Id, "Bill", "billy");
+            TedDiscord = new DiscordUserStub(ted.Id, "Ted", "teddy");
         }
     }
 }

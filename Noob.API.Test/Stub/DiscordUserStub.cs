@@ -19,15 +19,19 @@ namespace Noob.API.Test.Stub
         public IReadOnlyCollection<ClientType> ActiveClients { get; set; }
         public IReadOnlyCollection<IActivity> Activities { get; set; }
 
+        // Custom Properties
+        public string AvatarUrl { get; set; }
+
         public DiscordUserStub()
         {
 
         }
 
-        public DiscordUserStub(ulong id, string username)
+        public DiscordUserStub(ulong id, string username, string avatarUrl)
         {
             Id = id;
             Username = username;
+            AvatarUrl = avatarUrl;
         }
 
         public Task<IDMChannel> CreateDMChannelAsync(RequestOptions options = null)
@@ -35,15 +39,9 @@ namespace Noob.API.Test.Stub
             throw new NotImplementedException();
         }
 
-        public string GetAvatarUrl(ImageFormat format = ImageFormat.Auto, ushort size = 128)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GetDefaultAvatarUrl()
-        {
-            throw new NotImplementedException();
-        }
+        public string GetAvatarUrl(ImageFormat format = ImageFormat.Auto, ushort size = 128) =>
+                AvatarUrl != null ? $"http://localhost/{AvatarUrl}_{size}.{format}/" : null;
+        public string GetDefaultAvatarUrl() => "http://localhost/defaultAvatar.jpg/";
     }
 }
 

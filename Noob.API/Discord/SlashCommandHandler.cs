@@ -12,6 +12,7 @@ namespace Noob.API.Discord
         private RecurrentCommand RecurrentCommandHandler;
         private GiveCommand GiveCommandHandler;
         private StealCommand StealCommandHandler;
+        private StatsCommand StatsCommandHandler;
 
         public SlashCommandHandler(
             IUserRepository userRepository,
@@ -20,6 +21,7 @@ namespace Noob.API.Discord
             RecurrentCommandHandler = new RecurrentCommand(userRepository, userCommandRepository);
             GiveCommandHandler = new GiveCommand(userRepository);
             StealCommandHandler = new StealCommand(userRepository);
+            StatsCommandHandler = new StatsCommand(userRepository);
             SlashCommands = CreateSlashCommands();
         }
 
@@ -34,6 +36,11 @@ namespace Noob.API.Discord
                 (
                     "weekly",
                     "Redeem your weekly Niblets!",
+                    new List<SlashCommandOptionBuilder>()
+                ),
+                (
+                    "stats",
+                    "View your player stats.",
                     new List<SlashCommandOptionBuilder>()
                 ),
                 (
@@ -94,6 +101,9 @@ namespace Noob.API.Discord
                     break;
                 case "steal":
                     await StealCommandHandler.Steal(command);
+                    break;
+                case "stats":
+                    await StatsCommandHandler.Stats(command);
                     break;
             }
         }
