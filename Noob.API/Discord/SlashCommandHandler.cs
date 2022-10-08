@@ -9,16 +9,21 @@ namespace Noob.API.Discord
     public class SlashCommandHandler
     {
         private IEnumerable<SlashCommandProperties> SlashCommands;
-        private RecurrentCommand RecurrentCommandHandler;
-        private GiveCommand GiveCommandHandler;
+        private Dictionary<string, Func<ISlashCommandInteraction, CommandResponse>> Handlers;
 
         public SlashCommandHandler(
             IUserRepository userRepository,
             IUserCommandRepository userCommandRepository)
         {
-            RecurrentCommandHandler = new RecurrentCommand(userRepository, userCommandRepository);
-            GiveCommandHandler = new GiveCommand(userRepository);
+            var recurrentCommandHandler = new RecurrentCommand(userRepository, userCommandRepository);
+            var giveCommandHandler = new GiveCommand(userRepository);
             SlashCommands = CreateSlashCommands();
+            Handlers = new Dictionary<string, Func<ISlashCommandInteraction, CommandResponse>>
+            {
+                { "daily", recurrentCommandHandler.Daily },
+                { "weekly", recurrentCommandHandler.Weekly },
+                { "give", giveCommandHandler.Give },
+            };
         }
 
         public static IEnumerable<SlashCommandProperties> CreateSlashCommands() =>
@@ -65,26 +70,10 @@ namespace Noob.API.Discord
 
         public async Task Handle(ISlashCommandInteraction command)
         {
-            switch (command.Data.Name)
-            {
-                case "daily":
-                    await HandleDaily(command);
-                    break;
-                case "weekly":
-                    await HandleWeekly(command);
-                    break;
-                case "give":
-                    await HandleGive(command);
-                    break;
-            }
+            var handler = Handlers[command.Data.Name];
+            if (handler == null) return;
+            await command.RespondAsync(handler.Invoke(command).Message);
         }
-
-        private async Task HandleDaily(ISlashCommandInteraction command) =>
-            await command.RespondAsync(RecurrentCommandHandler.Daily(command).Message);
-        private async Task HandleWeekly(ISlashCommandInteraction command) =>
-            await command.RespondAsync(RecurrentCommandHandler.Weekly(command).Message);
-        private async Task HandleGive(ISlashCommandInteraction command) =>
-            await command.RespondAsync(GiveCommandHandler.Give(command).Message);
 
         public async Task RegisterGuild(SocketGuild guild)
         {
