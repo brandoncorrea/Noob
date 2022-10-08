@@ -82,6 +82,20 @@ namespace Noob.API.Test.Commands
         }
 
         [TestCase]
+        public async Task TargetDoesNotExist()
+        {
+            Noobs.Bill.BrowniePoints = 1;
+            Noobs.Bill.Experience = 2100;
+            Noobs.UserRepository.Delete(Noobs.Ted);
+            var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
+            Assert.AreEqual($"Ted doesn't have any Niblets to steal :(", interaction.RespondAsyncParams.Text);
+            Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
+            Assert.AreEqual(1, Noobs.Bill.BrowniePoints);
+            Assert.AreEqual(2100, Noobs.Bill.Experience);
+            Assert.AreEqual(0, Noobs.Ted.Experience);
+        }
+
+        [TestCase]
         public async Task StealsOneNiblet()
         {
             Noobs.Bill.BrowniePoints = 2;

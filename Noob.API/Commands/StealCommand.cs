@@ -25,7 +25,7 @@ namespace Noob.API.Commands
         private async Task AttemptSteal(ISlashCommandInteraction command, User user)
         {
             IUser discordTarget = (IUser)command.Data.Options.First().Value;
-            var victim = UserRepository.Find(discordTarget.Id);
+            var victim = UserRepository.FindOrCreate(discordTarget.Id);
             if (StealsSuccessfully(user, victim))
                 await StealSecretly(command, discordTarget, user, victim);
             else
