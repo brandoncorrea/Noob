@@ -139,6 +139,7 @@ namespace Noob.API.Test.Stub
                 Embed = embed,
                 Options = options
             };
+            HasResponded = true;
             return Task.CompletedTask;
         }
 

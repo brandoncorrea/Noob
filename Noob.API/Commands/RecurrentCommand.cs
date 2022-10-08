@@ -21,28 +21,31 @@ namespace Noob.API.Commands
             UserCommandRepository = userCommandRepository;
         }
 
-        public CommandResponse Daily(ISlashCommandInteraction command) =>
-            Recurrent("daily", 1, 1, RandomNibletsDaily, command);
+        public async Task Daily(ISlashCommandInteraction command) =>
+            await Recurrent("daily", 1, 1, RandomNibletsDaily, command);
         
-        public CommandResponse Weekly(ISlashCommandInteraction command) =>
-            Recurrent("weekly", 7, 2, RandomNibletsWeekly, command);
+        public async Task Weekly(ISlashCommandInteraction command) =>
+            await Recurrent("weekly", 7, 2, RandomNibletsWeekly, command);
 
-        private CommandResponse Recurrent(string kind, int interval, int commandId, Func<int> getNiblets, ISlashCommandInteraction command)
+        private async Task Recurrent(string kind, int interval, int commandId, Func<int> getNiblets, ISlashCommandInteraction command)
         {
             User user = UserRepository.FindOrCreate(command.User.Id);
-            UserCommand userCommand = UserCommandRepository.Find(user.Id, commandId);
 
+            UserCommand userCommand = UserCommandRepository.Find(user.Id, commandId);
             if (userCommand == null)
                 CreateNewUserCommand(user, commandId);
             else if (userCommand.ExecutedAt.LessThanDaysAgo(interval))
-                return CommandResponse.Fail($"Your {kind} reward will be ready in {Formatting.TimeFromNow(userCommand.ExecutedAt.AddDays(interval))}!");
-            else
+            {
+                await command.RespondAsync($"Your {kind} reward will be ready in {Formatting.TimeFromNow(userCommand.ExecutedAt.AddDays(interval))}!");
+                return;
+            }
+            else 
                 ResetCommandTimestamp(userCommand);
 
             int newNiblets = getNiblets.Invoke();
             user.Niblets += newNiblets;
             UserRepository.Save(user);
-            return CommandResponse.Ok($"You have redeemed your {kind} reward of {newNiblets} Niblets!");
+            await command.RespondAsync($"You have redeemed your {kind} reward of {newNiblets} Niblets!");
         }
 
         private void ResetCommandTimestamp(UserCommand userCommand)

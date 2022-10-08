@@ -68,10 +68,10 @@ namespace Noob.API.Discord
             switch (command.Data.Name)
             {
                 case "daily":
-                    await command.RespondAsync(RecurrentCommandHandler.Daily(command).Message);
+                    await RecurrentCommandHandler.Daily(command);
                     break;
                 case "weekly":
-                    await command.RespondAsync(RecurrentCommandHandler.Weekly(command).Message);
+                    await RecurrentCommandHandler.Weekly(command);
                     break;
                 case "give":
                     await GiveCommandHandler.Give(command);
