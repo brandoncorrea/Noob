@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Design;
 using Discord;
-using Noob.API.Extensions;
 using Noob.API.Helpers;
 using Noob.API.Models;
 using Noob.API.Repositories;

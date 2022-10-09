@@ -1,6 +1,6 @@
 ﻿using System;
 using Noob.API.Models;
-namespace Noob.API.Extensions;
+namespace Noob.API.Helpers;
 
 public static class Extensions
 {

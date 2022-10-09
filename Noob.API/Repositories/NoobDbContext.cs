@@ -2,7 +2,6 @@
 using System.Reflection.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Noob.API.Models;
-
 namespace Noob.API.Repositories;
 
 public abstract class NoobDbContext : DbContext

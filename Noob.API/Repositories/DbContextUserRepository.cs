@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Noob.API.Models;
-
 namespace Noob.API.Repositories;
 
 public class DbContextUserRepository : IUserRepository

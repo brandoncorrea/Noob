@@ -1,6 +1,5 @@
 ﻿using System;
 using Noob.API.Models;
-
 namespace Noob.API.Repositories;
 
 public interface IUserCommandRepository
