@@ -1,13 +1,12 @@
 ﻿using System;
 using Noob.API.Models;
 
-namespace Noob.API.Repositories
+namespace Noob.API.Repositories;
+
+public interface IUserCommandRepository
 {
-    public interface IUserCommandRepository
-    {
-        UserCommand Find(ulong userId, int commandId);
-        void Save(UserCommand command);
-        UserCommand Delete(ulong userId, int commandId);
-        UserCommand Delete(UserCommand command) => Delete(command.UserId, command.CommandId);
-    }
+    UserCommand Find(ulong userId, int commandId);
+    void Save(UserCommand command);
+    UserCommand Delete(ulong userId, int commandId);
+    UserCommand Delete(UserCommand command) => Delete(command.UserId, command.CommandId);
 }
