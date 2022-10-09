@@ -1,10 +1,8 @@
-﻿using System;
-using System.ComponentModel.Design;
-using Discord;
-using Noob.API.Helpers;
-using Noob.API.Models;
-using Noob.API.Repositories;
-namespace Noob.API.Commands;
+﻿using Discord;
+using Noob.Core.Helpers;
+using Noob.Core.Models;
+using Noob.DL;
+namespace Noob.Discord.SlashCommands;
 
 public class RecurrentCommand
 {

@@ -1,10 +1,7 @@
-﻿
-using Discord;
-using Microsoft.VisualBasic;
-using Noob.API.Commands;
-using Noob.API.Models;
-using Noob.API.Test.Stub;
-namespace Noob.API.Test.Commands;
+﻿using Discord;
+using Noob.Discord.SlashCommands;
+using Noob.Discord.Test.Stub;
+namespace Noob.Discord.Test.SlashCommands;
 
 [TestFixture]
 public class RecurrentCommandTest

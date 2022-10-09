@@ -1,9 +1,7 @@
-﻿using System;
-using Discord;
+﻿using Discord;
 using Discord.WebSocket;
-using Noob.API.Commands;
-using Noob.API.Repositories;
-namespace Noob.API.Discord;
+using Noob.DL;
+namespace Noob.Discord;
 
 public class Bot
 {

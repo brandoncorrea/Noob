@@ -7,28 +7,24 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Repositories\" />
-    <None Remove="Models\" />
-    <None Remove="Helpers\" />
     <None Remove="Discord.Net" />
     <None Remove="db\" />
-    <None Remove="Discord\" />
-    <None Remove="Commands\" />
     <None Remove="Microsoft.EntityFrameworkCore.Sqlite" />
     <None Remove="Microsoft.EntityFrameworkCore" />
     <None Remove="EntityFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Repositories\" />
-    <Folder Include="Models\" />
-    <Folder Include="Helpers\" />
     <Folder Include="db\" />
-    <Folder Include="Discord\" />
-    <Folder Include="Commands\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="3.8.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.9" />
+    <ProjectReference Include="..\Noob.DL\Noob.DL.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\Noob.Core\Noob.Core.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\Noob.Discord\Noob.Discord.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 </Project>

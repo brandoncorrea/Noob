@@ -1,8 +1,5 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Noob.API.Models;
-namespace Noob.API.Repositories;
+﻿using Noob.Core.Models;
+namespace Noob.DL;
 
 public class DbContextUserRepository : IUserRepository
 {

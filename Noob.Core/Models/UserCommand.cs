@@ -1,5 +1,4 @@
-﻿using System;
-namespace Noob.API.Models;
+﻿namespace Noob.Core.Models;
 
 public class UserCommand
 {

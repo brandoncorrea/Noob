@@ -1,8 +1,8 @@
-﻿using System;
-using Discord;
-using Noob.API.Models;
-using Noob.API.Repositories;
-namespace Noob.API.Test.Stub;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Noob.Core.Models;
+using Noob.DL;
+namespace Noob.Discord.Test.Stub;
 
 public static class Noobs
 {
@@ -14,7 +14,7 @@ public static class Noobs
     public static UserCommand TedWeekly => UserCommandRepository.Find(2, 2);
     public static IUserRepository UserRepository;
     public static IUserCommandRepository UserCommandRepository;
-    public static NoobDbContext Db = new InMemoryNoobDbContext();
+    public static NoobDbContext Db;
 
     public static void Initialize()
     {
@@ -24,7 +24,7 @@ public static class Noobs
         var billDaily = new UserCommand { UserId = bill.Id, CommandId = 1 };
         var tedWeekly = new UserCommand { UserId = ted.Id, CommandId = 2 };
 
-        Db = new InMemoryNoobDbContext();
+        Db = InMemoryDbContext.Create("InMemoryNoobs");
         Db.Database.EnsureDeleted();
         Db.Database.EnsureCreated();
         Db.Users.Add(bill);

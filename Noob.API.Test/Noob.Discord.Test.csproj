@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
+    <AssemblyName>Noob.API.Test</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,13 +24,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Stub\" />
-    <None Remove="Discord\" />
     <None Remove="Microsoft.EntityFrameworkCore.InMemory" />
     <None Remove="Microsoft.EntityFrameworkCore" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Stub\" />
-    <Folder Include="Discord\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" />

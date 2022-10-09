@@ -1,9 +1,7 @@
-﻿using System;
-using System.ComponentModel;
-using Discord;
-using Noob.API.Models;
-using Noob.API.Repositories;
-namespace Noob.API.Commands;
+﻿using Discord;
+using Noob.Core.Models;
+using Noob.DL;
+namespace Noob.Discord.SlashCommands;
 
 public class StealCommand
 {

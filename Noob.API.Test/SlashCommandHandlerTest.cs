@@ -1,8 +1,5 @@
-﻿using System;
-using System.Xml.Linq;
-using Discord;
-using Noob.API.Discord;
-namespace Noob.API.Test.Discord;
+﻿using Discord;
+namespace Noob.Discord.Test;
 
 [TestFixture]
 public class SlashCommandHandlerTest

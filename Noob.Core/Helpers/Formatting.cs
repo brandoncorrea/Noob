@@ -1,6 +1,4 @@
-﻿using System;
-using Noob.API.Models;
-namespace Noob.API.Helpers;
+﻿namespace Noob.Core.Helpers;
 
 public static class Formatting
 {

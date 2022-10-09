@@ -1,17 +1,11 @@
-﻿using Discord;
-using Discord.Net;
-using Discord.WebSocket;
-using Newtonsoft.Json;
-using Noob.API.Commands;
-using Noob.API.Discord;
-using Noob.API.Models;
-using Noob.API.Repositories;
+﻿using Noob.Discord;
+using Noob.DL;
 
 public class Program
 {
     public static async Task Main(string[] args)
     {
-        using (var db = new SqlLiteDbContext())
+        using (var db = SqlLiteDbContext.Create(@"Data Source=./db/noob.db"))
         {
             await new Bot(
                 new DbContextUserRepository(db),

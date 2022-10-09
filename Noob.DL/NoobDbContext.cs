@@ -1,12 +1,11 @@
-﻿using System;
-using System.Reflection.Metadata;
-using Microsoft.EntityFrameworkCore;
-using Noob.API.Models;
-namespace Noob.API.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using Noob.Core.Models;
+namespace Noob.DL;
 
 public abstract class NoobDbContext : DbContext
 {
-    public NoobDbContext() => Database.EnsureCreated();
+    public NoobDbContext(DbContextOptions options) : base(options) =>
+        Database.EnsureCreated();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

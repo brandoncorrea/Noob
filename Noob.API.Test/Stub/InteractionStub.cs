@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using Discord;
-using Discord.WebSocket;
-using Noob.API.Models;
-namespace Noob.API.Test.Stub;
+namespace Noob.Discord.Test.Stub;
 
 public class CommandOptionStub : IApplicationCommandInteractionDataOption
 {

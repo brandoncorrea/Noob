@@ -12,7 +12,7 @@
     "Noob.API": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:11794",
+      "applicationUrl": "http://localhost:33712",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

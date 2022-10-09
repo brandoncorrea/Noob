@@ -1,6 +1,5 @@
-﻿using System;
-using Discord;
-namespace Noob.API.Test.Stub;
+﻿using Discord;
+namespace Noob.Discord.Test.Stub;
 
 public class DiscordUserStub : IUser
 {
