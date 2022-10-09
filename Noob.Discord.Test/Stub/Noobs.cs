@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Noob.Core.Models;
 using Noob.DL;
 namespace Noob.Discord.Test.Stub;
