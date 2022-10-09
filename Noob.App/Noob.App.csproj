@@ -13,6 +13,9 @@
     <ProjectReference Include="..\Noob.DL\Noob.DL.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+    <ProjectReference Include="..\Noob.Migrate\Noob.Migrate.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Remove="db\" />

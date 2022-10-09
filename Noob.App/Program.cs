@@ -1,5 +1,6 @@
 ﻿using Noob.Discord;
 using Noob.DL;
+using Noob.Migrate;
 
 public class Program
 {
@@ -7,10 +8,12 @@ public class Program
     {
         using (var db = SqlLiteDbContext.Create(@"Data Source=./db/noob.db"))
         {
+            Migration.Migrate(db);
+
             await new Bot(
                 new DbContextUserRepository(db),
                 new DbContextUserCommandRepository(db))
-                .StartAsync();
+                .StartAsync(File.ReadAllText("discord.token"));
 
             await Task.Delay(-1);
         }
