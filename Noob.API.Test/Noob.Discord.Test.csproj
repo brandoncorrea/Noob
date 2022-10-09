@@ -20,9 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Noob.API\Noob.API.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="Stub\" />
     <None Remove="Microsoft.EntityFrameworkCore.InMemory" />
     <None Remove="Microsoft.EntityFrameworkCore" />
