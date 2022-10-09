@@ -15,20 +15,30 @@ namespace Noob.API.Test.Stub
         public static UserCommand TedWeekly => UserCommandRepository.Find(2, 2);
         public static IUserRepository UserRepository;
         public static IUserCommandRepository UserCommandRepository;
+        public static NoobDbContext Db = new InMemoryNoobDbContext();
 
         public static void Initialize()
         {
             var bill = new User { Id = 1 };
             var ted = new User { Id = 2 };
-            UserRepository = new UserRepositoryStub(new List<User> { bill, ted });
 
             var billDaily = new UserCommand { UserId = bill.Id, CommandId = 1 };
             var tedWeekly = new UserCommand { UserId = ted.Id, CommandId = 2 };
-            UserCommandRepository = new UserCommandRepositoryStub(new List<UserCommand> { billDaily, tedWeekly });
+
+            Db = new InMemoryNoobDbContext();
+            Db.Database.EnsureDeleted();
+            Db.Database.EnsureCreated();
+            Db.Users.Add(bill);
+            Db.Users.Add(ted);
+            Db.UserCommands.Add(billDaily);
+            Db.UserCommands.Add(tedWeekly);
+            Db.SaveChanges();
+
+            UserRepository = new DbContextUserRepository(Db);
+            UserCommandRepository = new DbContextUserCommandRepository(Db);
 
             BillDiscord = new DiscordUserStub(bill.Id, "Bill", "billy");
             TedDiscord = new DiscordUserStub(ted.Id, "Ted", "teddy");
         }
     }
 }
-

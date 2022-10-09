@@ -16,7 +16,7 @@ namespace Noob.API.Test.Commands
         [TestCase]
         public async Task NoBrowniePoints()
         {
-            Noobs.Ted.Niblets = 50;
+            Noobs.UserRepository.Save(Noobs.Ted.SetNiblets(50));
             var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
             Assert.AreEqual("You need Brownie Points to steal from other players.", interaction.RespondAsyncParams.Text);
             Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
@@ -26,10 +26,8 @@ namespace Noob.API.Test.Commands
         [TestCase]
         public async Task OneBrowniePointAndTwentyLevelsBelow()
         {
-            Noobs.Bill.BrowniePoints = 1;
-            Noobs.Bill.Experience = 50;
-            Noobs.Ted.Niblets = 50;
-            Noobs.Ted.Experience = 2100;
+            Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(1).SetExperience(50));
+            Noobs.UserRepository.Save(Noobs.Ted.SetNiblets(50).SetExperience(2100));
             var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
             Assert.AreEqual("Bill was caught trying to steal from Ted. What a noob!", interaction.RespondAsyncParams.Text);
             Assert.IsFalse(interaction.RespondAsyncParams.Ephemeral);
@@ -41,9 +39,8 @@ namespace Noob.API.Test.Commands
         [TestCase]
         public async Task TwentyLevelsBelowWithNoExperience()
         {
-            Noobs.Bill.BrowniePoints = 1;
-            Noobs.Ted.Niblets = 50;
-            Noobs.Ted.Experience = 2000;
+            Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(1));
+            Noobs.UserRepository.Save(Noobs.Ted.SetNiblets(50).SetExperience(2000));
             var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
             Assert.AreEqual("Bill was caught trying to steal from Ted. What a noob!", interaction.RespondAsyncParams.Text);
             Assert.IsFalse(interaction.RespondAsyncParams.Ephemeral);
@@ -55,10 +52,8 @@ namespace Noob.API.Test.Commands
         [TestCase]
         public async Task OneBrowniePointAndTwentyLevelsAbove()
         {
-            Noobs.Bill.BrowniePoints = 1;
-            Noobs.Bill.Experience = 2100;
-            Noobs.Ted.Niblets = 50;
-            Noobs.Ted.Experience = 50;
+            Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(1).SetExperience(2100));
+            Noobs.UserRepository.Save(Noobs.Ted.SetNiblets(50).SetExperience(50));
             var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
             Assert.AreEqual($"You stole {Noobs.Bill.Niblets} Niblets from Ted >:)", interaction.RespondAsyncParams.Text);
             Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
@@ -70,9 +65,8 @@ namespace Noob.API.Test.Commands
         [TestCase]
         public async Task TargetHasNoNiblets()
         {
-            Noobs.Bill.BrowniePoints = 1;
-            Noobs.Bill.Experience = 2100;
-            Noobs.Ted.Experience = 50;
+            Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(1).SetExperience(2100));
+            Noobs.UserRepository.Save(Noobs.Ted.SetExperience(50));
             var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
             Assert.AreEqual($"Ted doesn't have any Niblets to steal :(", interaction.RespondAsyncParams.Text);
             Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
@@ -84,8 +78,7 @@ namespace Noob.API.Test.Commands
         [TestCase]
         public async Task TargetDoesNotExist()
         {
-            Noobs.Bill.BrowniePoints = 1;
-            Noobs.Bill.Experience = 2100;
+            Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(1).SetExperience(2100));
             Noobs.UserRepository.Delete(Noobs.Ted);
             var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
             Assert.AreEqual($"Ted doesn't have any Niblets to steal :(", interaction.RespondAsyncParams.Text);
@@ -98,10 +91,8 @@ namespace Noob.API.Test.Commands
         [TestCase]
         public async Task StealsOneNiblet()
         {
-            Noobs.Bill.BrowniePoints = 2;
-            Noobs.Bill.Experience = 2100;
-            Noobs.Ted.Niblets = 1;
-            Noobs.Ted.Experience = 50;
+            Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(2).SetExperience(2100));
+            Noobs.UserRepository.Save(Noobs.Ted.SetNiblets(1).SetExperience(50));
             var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
             Assert.AreEqual($"You stole 1 Niblet from Ted >:)", interaction.RespondAsyncParams.Text);
             Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
@@ -124,4 +115,3 @@ namespace Noob.API.Test.Commands
         }
     }
 }
-

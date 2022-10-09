@@ -16,8 +16,7 @@ namespace Noob.API.Test.Commands
         [Test]
         public async Task GiveNothing()
         {
-            Noobs.Bill.Niblets = 5;
-
+            Noobs.UserRepository.Save(Noobs.Bill.SetNiblets(5));
             var interaction = new InteractionStub(
                 Noobs.BillDiscord,
                 new List<(string, object)>
@@ -35,7 +34,7 @@ namespace Noob.API.Test.Commands
         [Test]
         public async Task GiveNegativeAmount()
         {
-            Noobs.Bill.Niblets = 5;
+            Noobs.UserRepository.Save(Noobs.Bill.SetNiblets(5));
 
             var interaction = new InteractionStub(
                 Noobs.BillDiscord,
@@ -54,8 +53,8 @@ namespace Noob.API.Test.Commands
         [Test]
         public async Task GiveOneNiblet()
         {
-            Noobs.Bill.Niblets = 100;
-            Noobs.Ted.Niblets = 3;
+            Noobs.UserRepository.Save(Noobs.Bill.SetNiblets(100));
+            Noobs.UserRepository.Save(Noobs.Ted.SetNiblets(3));
 
             var interaction = new InteractionStub(
                 Noobs.BillDiscord,
@@ -76,7 +75,7 @@ namespace Noob.API.Test.Commands
         [Test]
         public async Task NotEnoughNiblets()
         {
-            Noobs.Bill.Niblets = 5;
+            Noobs.UserRepository.Save(Noobs.Bill.SetNiblets(5));
 
             var interaction = new InteractionStub(
                 Noobs.BillDiscord,
@@ -95,8 +94,7 @@ namespace Noob.API.Test.Commands
         [Test]
         public async Task GiveNibletsToNonexistentUser()
         {
-            Noobs.Bill.Niblets = 5;
-            Noobs.Bill.BrowniePoints = 50;
+            Noobs.UserRepository.Save(Noobs.Bill.SetNiblets(5).SetBrowniePoints(50));
             Noobs.UserRepository.Delete(Noobs.Ted);
 
             var interaction = new InteractionStub(
@@ -118,8 +116,7 @@ namespace Noob.API.Test.Commands
         [Test]
         public async Task GiveFiftyNiblets()
         {
-            Noobs.Bill.Niblets = 75;
-            Noobs.Bill.BrowniePoints = 50;
+            Noobs.UserRepository.Save(Noobs.Bill.SetNiblets(75).SetBrowniePoints(50));
 
             var interaction = new InteractionStub(
                 Noobs.BillDiscord,
@@ -140,8 +137,7 @@ namespace Noob.API.Test.Commands
         [Test]
         public async Task GiveSelfNiblets()
         {
-            Noobs.Bill.Niblets = 75;
-            Noobs.Bill.BrowniePoints = 50;
+            Noobs.UserRepository.Save(Noobs.Bill.SetNiblets(75).SetBrowniePoints(50));
 
             var interaction = new InteractionStub(
                 Noobs.BillDiscord,
@@ -161,8 +157,7 @@ namespace Noob.API.Test.Commands
         [Test]
         public async Task GiveSelfOneNiblet()
         {
-            Noobs.Bill.Niblets = 75;
-            Noobs.Bill.BrowniePoints = 50;
+            Noobs.UserRepository.Save(Noobs.Bill.SetNiblets(75).SetBrowniePoints(50));
 
             var interaction = new InteractionStub(
                 Noobs.BillDiscord,

@@ -56,9 +56,7 @@ namespace Noob.API.Test.Commands
         [TestCase]
         public async Task UserExistsWithStats()
         {
-            Noobs.Ted.BrowniePoints = 4;
-            Noobs.Ted.Experience = 155;
-            Noobs.Ted.Niblets = 32;
+            Noobs.UserRepository.Save(Noobs.Ted.SetBrowniePoints(4).SetExperience(155).SetNiblets(32));
             var interaction = new InteractionStub(Noobs.TedDiscord);
             await new StatsCommand(Noobs.UserRepository).Stats(interaction);
             var embed = interaction.RespondAsyncParams.Embed;

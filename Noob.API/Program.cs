@@ -4,17 +4,21 @@ using Discord.WebSocket;
 using Newtonsoft.Json;
 using Noob.API.Commands;
 using Noob.API.Discord;
+using Noob.API.Models;
 using Noob.API.Repositories;
 
 public class Program
 {
     public static async Task Main(string[] args)
     {
-        await new Bot(
-            new JsonUserRepository("db/user.json"),
-            new JsonUserCommandRepository("db/userCommand.json"))
-            .StartAsync();
+        using (var db = new SqlLiteDbContext())
+        {
+            await new Bot(
+                new DbContextUserRepository(db),
+                new DbContextUserCommandRepository(db))
+                .StartAsync();
 
-        await Task.Delay(-1);
+            await Task.Delay(-1);
+        }
     }
 }
