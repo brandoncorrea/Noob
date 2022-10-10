@@ -100,6 +100,17 @@ public class StealCommandTest
         Assert.AreEqual(0, Noobs.Ted.Niblets);
     }
 
+    [TestCase]
+    public async Task StealsFromSelf()
+    {
+        Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(2).SetExperience(2100));
+        var interaction = await Steal(Noobs.BillDiscord, Noobs.BillDiscord);
+        Assert.AreEqual("You want to steal from... yourself?!", interaction.RespondAsyncParams.Text);
+        Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
+        Assert.AreEqual(2100, Noobs.Bill.Experience);
+        Assert.AreEqual(2, Noobs.Bill.BrowniePoints);
+    }
+
     private async Task<InteractionStub> Steal(IUser user, IUser victim)
     {
         var interaction = new InteractionStub(

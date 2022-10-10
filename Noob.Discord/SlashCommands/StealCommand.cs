@@ -31,16 +31,21 @@ public class StealCommand : ISlashCommandHandler
 
     public async Task HandleAsync(ISlashCommandInteraction command)
     {
-        var user = UserRepository.Find(command.User.Id);
-        if (user.BrowniePoints <= 0)
-            await command.RespondAsync("You need Brownie Points to steal from other players.", ephemeral: true);
+        IUser discordTarget = (IUser)command.Data.Options.First().Value;
+        if (discordTarget.Id == command.User.Id)
+            await command.RespondAsync("You want to steal from... yourself?!", ephemeral: true);
         else
-            await AttemptSteal(command, user);
+        {
+            var user = UserRepository.Find(command.User.Id);
+            if (user.BrowniePoints <= 0)
+                await command.RespondAsync("You need Brownie Points to steal from other players.", ephemeral: true);
+            else
+                await AttemptSteal(command, user, discordTarget);
+        }
     }
 
-    private async Task AttemptSteal(ISlashCommandInteraction command, User user)
+    private async Task AttemptSteal(ISlashCommandInteraction command, User user, IUser discordTarget)
     {
-        IUser discordTarget = (IUser)command.Data.Options.First().Value;
         var victim = UserRepository.FindOrCreate(discordTarget.Id);
         if (StealsSuccessfully(user, victim))
             await StealSecretly(command, discordTarget, user, victim);
