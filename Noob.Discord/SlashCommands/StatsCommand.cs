@@ -2,13 +2,21 @@
 using Noob.DL;
 namespace Noob.Discord.SlashCommands;
 
-public class StatsCommand
+public class StatsCommand : ISlashCommandHandler
 {
+    public string CommandName => "stats";
     private IUserRepository UserRepository;
     public StatsCommand(IUserRepository userRepository) =>
         UserRepository = userRepository;
 
-    public async Task Stats(ISlashCommandInteraction command)
+    public SlashCommandProperties GetSlashCommandProperties() =>
+        new SlashCommandBuilder
+        {
+            Name = CommandName,
+            Description = "View your player stats."
+        }.Build();
+
+    public async Task HandleAsync(ISlashCommandInteraction command)
     {
         var user = UserRepository.FindOrCreate(command.User.Id);
         var embed = new EmbedBuilder()

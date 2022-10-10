@@ -15,7 +15,7 @@ public class StatsCommandTest
         Noobs.UserRepository.Delete(Noobs.Bill);
         Noobs.BillDiscord.AvatarUrl = null;
         var interaction = new InteractionStub(Noobs.BillDiscord);
-        await new StatsCommand(Noobs.UserRepository).Stats(interaction);
+        await new StatsCommand(Noobs.UserRepository).HandleAsync(interaction);
         var embed = interaction.RespondAsyncParams.Embed;
         Assert.AreEqual("Bill", embed.Author.Value.Name);
         Assert.AreEqual("http://localhost/defaultAvatar.jpg/", embed.Author.Value.IconUrl);
@@ -29,7 +29,7 @@ public class StatsCommandTest
     {
         Noobs.UserRepository.Delete(Noobs.Bill);
         var interaction = new InteractionStub(Noobs.BillDiscord);
-        await new StatsCommand(Noobs.UserRepository).Stats(interaction);
+        await new StatsCommand(Noobs.UserRepository).HandleAsync(interaction);
         var embed = interaction.RespondAsyncParams.Embed;
         Assert.AreEqual("Bill", embed.Author.Value.Name);
         Assert.AreEqual("http://localhost/billy_128.Auto/", embed.Author.Value.IconUrl);
@@ -42,7 +42,7 @@ public class StatsCommandTest
     public async Task UserExistsWithoutStats()
     {
         var interaction = new InteractionStub(Noobs.BillDiscord);
-        await new StatsCommand(Noobs.UserRepository).Stats(interaction);
+        await new StatsCommand(Noobs.UserRepository).HandleAsync(interaction);
         var embed = interaction.RespondAsyncParams.Embed;
         Assert.AreEqual("Bill", embed.Author.Value.Name);
         Assert.AreEqual("http://localhost/billy_128.Auto/", embed.Author.Value.IconUrl);
@@ -56,7 +56,7 @@ public class StatsCommandTest
     {
         Noobs.UserRepository.Save(Noobs.Ted.SetBrowniePoints(4).SetExperience(155).SetNiblets(32));
         var interaction = new InteractionStub(Noobs.TedDiscord);
-        await new StatsCommand(Noobs.UserRepository).Stats(interaction);
+        await new StatsCommand(Noobs.UserRepository).HandleAsync(interaction);
         var embed = interaction.RespondAsyncParams.Embed;
         Assert.AreEqual("Ted", embed.Author.Value.Name);
         Assert.AreEqual("http://localhost/teddy_128.Auto/", embed.Author.Value.IconUrl);

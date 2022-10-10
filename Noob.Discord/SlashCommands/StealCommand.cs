@@ -3,14 +3,32 @@ using Noob.Core.Models;
 using Noob.DL;
 namespace Noob.Discord.SlashCommands;
 
-public class StealCommand
+public class StealCommand : ISlashCommandHandler
 {
+    public string CommandName => "steal";
     private IUserRepository UserRepository;
 
     public StealCommand(IUserRepository userRepository) =>
         UserRepository = userRepository;
 
-    public async Task Steal(ISlashCommandInteraction command)
+    public SlashCommandProperties GetSlashCommandProperties() =>
+        new SlashCommandBuilder
+        {
+            Name = CommandName,
+            Description = "Steal Niblets from another player!",
+            Options = new List<SlashCommandOptionBuilder>()
+            {
+                new SlashCommandOptionBuilder
+                {
+                    Name = "victim",
+                    Description = "The person you will be stealing from.",
+                    Type = ApplicationCommandOptionType.User,
+                    IsRequired = true,
+                }
+            }
+        }.Build();
+
+    public async Task HandleAsync(ISlashCommandInteraction command)
     {
         var user = UserRepository.Find(command.User.Id);
         if (user.BrowniePoints <= 0)

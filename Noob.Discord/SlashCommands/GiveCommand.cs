@@ -3,13 +3,40 @@ using Noob.Core.Models;
 using Noob.DL;
 namespace Noob.Discord.SlashCommands;
 
-public class GiveCommand
+public class GiveCommand : ISlashCommandHandler
 {
+    public string CommandName => "give";
+
     private IUserRepository UserRepository;
+
     public GiveCommand(IUserRepository userRepository) =>
         UserRepository = userRepository;
 
-    public async Task Give(ISlashCommandInteraction command)
+    public SlashCommandProperties GetSlashCommandProperties() =>
+        new SlashCommandBuilder
+        {
+            Name = CommandName,
+            Description = "Give Niblets to another player, earning yourself Brownie Points!",
+            Options = new List<SlashCommandOptionBuilder>()
+            {
+                new SlashCommandOptionBuilder
+                {
+                    Name = "recipient",
+                    Description = "The person who will receive the Niblets.",
+                    Type = ApplicationCommandOptionType.User,
+                    IsRequired = true,
+                },
+                new SlashCommandOptionBuilder
+                {
+                    Name = "amount",
+                    Description = "The number of Niblets to give.",
+                    Type = ApplicationCommandOptionType.Integer,
+                    IsRequired = true,
+                }
+            }
+        }.Build();
+
+    public async Task HandleAsync(ISlashCommandInteraction command)
     {
         IUser discordTo = (IUser)command.Data.Options.First().Value;
         int amount = unchecked((int)(long)command.Data.Options.Last().Value);

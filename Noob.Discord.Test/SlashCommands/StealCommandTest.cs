@@ -104,10 +104,10 @@ public class StealCommandTest
     {
         var interaction = new InteractionStub(
             user,
-            new List<(string, object)> { ("victim", victim) }
+            new (string, object)[] { ("victim", victim) }
         );
 
-        await new StealCommand(Noobs.UserRepository).Steal(interaction);
+        await new StealCommand(Noobs.UserRepository).HandleAsync(interaction);
         return interaction;
     }
 }

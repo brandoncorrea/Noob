@@ -4,10 +4,15 @@ using Noob.Core.Models;
 using Noob.DL;
 namespace Noob.Discord.SlashCommands;
 
-public class RecurrentCommand
+public abstract class RecurrentCommand : ISlashCommandHandler
 {
-    private IUserRepository UserRepository { get; set; }
-    private IUserCommandRepository UserCommandRepository { get; set; }
+    public abstract string CommandName { get; }
+    internal int IntervalDays;
+    internal int CommandId;
+    internal abstract int GetNiblets();
+
+    IUserRepository UserRepository;
+    IUserCommandRepository UserCommandRepository;
 
     public RecurrentCommand(
         IUserRepository userRepository,
@@ -17,28 +22,29 @@ public class RecurrentCommand
         UserCommandRepository = userCommandRepository;
     }
 
-    public async Task Daily(ISlashCommandInteraction command) =>
-        await Recurrent("daily", 1, 1, RandomNibletsDaily, command);
-    
-    public async Task Weekly(ISlashCommandInteraction command) =>
-        await Recurrent("weekly", 7, 2, RandomNibletsWeekly, command);
+    public SlashCommandProperties GetSlashCommandProperties() =>
+        new SlashCommandBuilder
+        {
+            Name = CommandName,
+            Description = $"Redeem your {CommandName} Niblets!"
+        }.Build();
 
-    private async Task Recurrent(string kind, int interval, int commandId, Func<int> getNiblets, ISlashCommandInteraction command)
+    public async Task HandleAsync(ISlashCommandInteraction command)
     {
         User user = UserRepository.FindOrCreate(command.User.Id);
 
-        UserCommand userCommand = UserCommandRepository.Find(user.Id, commandId);
+        UserCommand userCommand = UserCommandRepository.Find(user.Id, CommandId);
         if (userCommand == null)
-            CreateNewUserCommand(user, commandId);
-        else if (userCommand.ExecutedAt.LessThanDaysAgo(interval))
+            CreateNewUserCommand(user, CommandId);
+        else if (userCommand.ExecutedAt.LessThanDaysAgo(IntervalDays))
         {
-            await command.RespondAsync($"Your {kind} reward will be ready in {Formatting.TimeFromNow(userCommand.ExecutedAt.AddDays(interval))}!", ephemeral: true);
+            await command.RespondAsync($"Your {CommandName} reward will be ready in {Formatting.TimeFromNow(userCommand.ExecutedAt.AddDays(IntervalDays))}!", ephemeral: true);
             return;
         }
-        else 
+        else
             ResetCommandTimestamp(userCommand);
 
-        int newNiblets = getNiblets.Invoke();
+        int newNiblets = GetNiblets();
         user.Niblets += newNiblets;
         UserRepository.Save(user);
         await command.RespondAsync($"{command.User.Username} received {newNiblets} Niblets!");
@@ -57,7 +63,4 @@ public class RecurrentCommand
             CommandId = commandId,
             ExecutedAt = DateTime.Now
         });
-
-    private static int RandomNibletsDaily() => new Random().Next(1, 50);
-    private static int RandomNibletsWeekly() => new Random().Next(50, 250);
 }

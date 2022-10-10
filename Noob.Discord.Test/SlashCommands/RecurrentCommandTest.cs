@@ -78,10 +78,10 @@ public class RecurrentCommandTest
         private async Task<InteractionStub> ExecuteDaily(IUser user)
         {
             var interaction = new InteractionStub(user);
-            await new RecurrentCommand(
+            await new DailyCommand(
                 Noobs.UserRepository,
                 Noobs.UserCommandRepository)
-                .Daily(interaction);
+                .HandleAsync(interaction);
             return interaction;
         }
     }
@@ -158,10 +158,10 @@ public class RecurrentCommandTest
         private async Task<InteractionStub> ExecuteWeekly(IUser user)
         {
             var interaction = new InteractionStub(user);
-            await new RecurrentCommand(
+            await new WeeklyCommand(
                 Noobs.UserRepository,
                 Noobs.UserCommandRepository)
-                .Weekly(interaction);
+                .HandleAsync(interaction);
             return interaction;
         }
     }

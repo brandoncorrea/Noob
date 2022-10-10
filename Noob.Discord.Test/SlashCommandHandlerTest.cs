@@ -1,4 +1,6 @@
 ﻿using Discord;
+using Noob.Discord.Test.Stub;
+
 namespace Noob.Discord.Test;
 
 [TestFixture]
@@ -8,7 +10,7 @@ public class SlashCommandHandlerTest
 
     [SetUp]
     public void SetUp() =>
-        SlashCommands = SlashCommandHandler.CreateSlashCommands();
+        SlashCommands = new SlashCommandHandler(Noobs.UserRepository, Noobs.UserCommandRepository).CreateSlashCommands();
 
     [Test]
     public void CreatesSlashCommandProperties()
@@ -17,7 +19,6 @@ public class SlashCommandHandlerTest
         Assert.IsNotNull(FindCommand("weekly", "Redeem your weekly Niblets!"));
         Assert.IsNotNull(FindCommand("stats", "View your player stats."));
     }
-
 
     [Test]
     public void CreatesGiveCommand()
