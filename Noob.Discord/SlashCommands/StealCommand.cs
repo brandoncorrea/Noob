@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Noob.Core.Helpers;
 using Noob.Core.Models;
 using Noob.DL;
 namespace Noob.Discord.SlashCommands;
@@ -65,7 +66,7 @@ public class StealCommand : ISlashCommandHandler
         victim.Niblets -= niblets;
         UserRepository.Save(user);
         UserRepository.Save(victim);
-        await command.RespondAsync($"You stole {NibletTerm(niblets)} from {discordTarget.Username} >:)", ephemeral: true);
+        await command.RespondAsync($"You stole {Formatting.NibletTerm(niblets)} from {discordTarget.Username} >:)", ephemeral: true);
     }
 
     private async Task AnnounceTheftFailure(ISlashCommandInteraction command, IUser discordTarget, User user, User victim)
@@ -118,8 +119,5 @@ public class StealCommand : ISlashCommandHandler
         var victimRoll = random.Next(1, 20);
         return userRoll > victimRoll;
     }
-
-    private string NibletTerm(int niblets) =>
-        niblets == 1 ? "1 Niblet" : $"{niblets} Niblets";
 }
 

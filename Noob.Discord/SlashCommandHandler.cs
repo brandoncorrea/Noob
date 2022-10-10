@@ -7,11 +7,12 @@ namespace Noob.Discord;
 public class SlashCommandHandler
 {
     private IEnumerable<SlashCommandProperties> SlashCommands;
-    private IEnumerable<ISlashCommandHandler> SlashCommandHandlers;
+    public IEnumerable<ISlashCommandHandler> SlashCommandHandlers;
 
     public SlashCommandHandler(
         IUserRepository userRepository,
-        IUserCommandRepository userCommandRepository)
+        IUserCommandRepository userCommandRepository,
+        IItemRepository itemRepository)
     {
         SlashCommandHandlers = new ISlashCommandHandler[]
         {
@@ -19,7 +20,8 @@ public class SlashCommandHandler
             new WeeklyCommand(userRepository, userCommandRepository),
             new GiveCommand(userRepository),
             new StealCommand(userRepository),
-            new StatsCommand(userRepository)
+            new StatsCommand(userRepository),
+            new ShopCommand(itemRepository)
         };
         SlashCommands = CreateSlashCommands();
     }

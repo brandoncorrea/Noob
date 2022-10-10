@@ -9,10 +9,11 @@ public abstract class NoobDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<UserCommand>()
-            .HasKey(command => new { command.CommandId, command.UserId });
-        modelBuilder.Entity<User>()
-            .HasKey(user => new { user.Id });
+        modelBuilder.Entity<UserCommand>().HasKey(command => new { command.CommandId, command.UserId });
+        modelBuilder.Entity<User>().HasKey(user => new { user.Id });
+        modelBuilder.Entity<Item>().HasKey(item => item.Id);
+        modelBuilder.Entity<UserItem>().HasKey(item => new { item.UserId, item.ItemId });
+
         modelBuilder.Entity<User>()
             .HasMany<UserCommand>()
             .WithOne()
@@ -21,4 +22,6 @@ public abstract class NoobDbContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<UserCommand> UserCommands { get; set; }
+    public DbSet<Item> Items { get; set; }
+    public DbSet<UserItem> UserItems { get; set; }
 }

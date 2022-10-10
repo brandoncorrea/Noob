@@ -10,7 +10,11 @@ public class SlashCommandHandlerTest
 
     [SetUp]
     public void SetUp() =>
-        SlashCommands = new SlashCommandHandler(Noobs.UserRepository, Noobs.UserCommandRepository).CreateSlashCommands();
+        SlashCommands = new SlashCommandHandler(
+            Noobs.UserRepository,
+            Noobs.UserCommandRepository,
+            Noobs.ItemRepository)
+        .CreateSlashCommands();
 
     [Test]
     public void CreatesSlashCommandProperties()
@@ -18,6 +22,7 @@ public class SlashCommandHandlerTest
         Assert.IsNotNull(FindCommand("daily", "Redeem your daily Niblets!"));
         Assert.IsNotNull(FindCommand("weekly", "Redeem your weekly Niblets!"));
         Assert.IsNotNull(FindCommand("stats", "View your player stats."));
+        Assert.IsNotNull(FindCommand("shop", "Purchase items from the shopkeeper."));
     }
 
     [Test]

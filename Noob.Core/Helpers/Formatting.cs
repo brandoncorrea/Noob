@@ -23,4 +23,9 @@ public static class Formatting
             return $"{timeDifference.Hours} {hourTerm}";
         return $"{timeDifference.Minutes} {minuteTerm}";
     }
+
+    public static string NibletTerm(int niblets) =>
+        niblets == 1 ? "1 Niblet" : $"{niblets} Niblets";
+    public static string BrownieTerm(int browniePoints) =>
+        browniePoints == 1 ? "1 Brownie Point" : $"{browniePoints} Brownie Points";
 }

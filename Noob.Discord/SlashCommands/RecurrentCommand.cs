@@ -47,7 +47,7 @@ public abstract class RecurrentCommand : ISlashCommandHandler
         int newNiblets = GetNiblets();
         user.Niblets += newNiblets;
         UserRepository.Save(user);
-        await command.RespondAsync($"{command.User.Username} received {newNiblets} Niblets!");
+        await command.RespondAsync($"{command.User.Username} received {Formatting.NibletTerm(newNiblets)}!");
     }
 
     private void ResetCommandTimestamp(UserCommand userCommand)

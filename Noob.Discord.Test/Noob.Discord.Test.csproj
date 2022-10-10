@@ -23,9 +23,11 @@
     <None Remove="Stub\" />
     <None Remove="Microsoft.EntityFrameworkCore.InMemory" />
     <None Remove="Microsoft.EntityFrameworkCore" />
+    <None Remove="Components\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Stub\" />
+    <Folder Include="Components\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" />

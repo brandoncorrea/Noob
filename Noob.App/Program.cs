@@ -12,7 +12,9 @@ public class Program
 
             await new Bot(
                 new DbContextUserRepository(db),
-                new DbContextUserCommandRepository(db))
+                new DbContextUserCommandRepository(db),
+                new DbContextItemRepository(db),
+                new DbContextUserItemRepository(db))
                 .StartAsync(File.ReadAllText("discord.token"));
 
             await Task.Delay(-1);
