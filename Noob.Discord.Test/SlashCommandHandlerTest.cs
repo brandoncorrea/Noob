@@ -55,6 +55,18 @@ public class SlashCommandHandlerTest
         Assert.IsTrue(victimOption.IsRequired);
     }
 
+    [Test]
+    public void CreatesAttackCommand()
+    {
+        var command = FindCommand("attack", "Attack another player!");
+        var targetOption = command.Options.Value.First();
+
+        Assert.AreEqual("target", targetOption.Name);
+        Assert.AreEqual("The person you want to attack.", targetOption.Description);
+        Assert.AreEqual(ApplicationCommandOptionType.User, targetOption.Type);
+        Assert.IsTrue(targetOption.IsRequired);
+    }
+
     private SlashCommandProperties FindCommand(string name, string description) =>
         SlashCommands.FirstOrDefault(command =>
             command?.Name.Value == name &&

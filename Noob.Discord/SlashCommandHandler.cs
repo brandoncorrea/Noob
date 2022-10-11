@@ -21,7 +21,8 @@ public class SlashCommandHandler
             new GiveCommand(userRepository),
             new StealCommand(userRepository),
             new StatsCommand(userRepository),
-            new ShopCommand(itemRepository)
+            new ShopCommand(itemRepository),
+            new AttackCommand(userRepository)
         };
         SlashCommands = CreateSlashCommands();
     }

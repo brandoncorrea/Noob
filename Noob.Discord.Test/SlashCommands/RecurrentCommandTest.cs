@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Noob.Core.Helpers;
 using Noob.Discord.SlashCommands;
 using Noob.Discord.Test.Stub;
 namespace Noob.Discord.Test.SlashCommands;
@@ -37,7 +38,7 @@ public class RecurrentCommandTest
             var interaction = await ExecuteDaily(Noobs.BillDiscord);
             Assert.Less(Noobs.BillDaily.ExecutedAt, DateTime.Now.AddSeconds(1));
             Assert.Greater(Noobs.BillDaily.ExecutedAt, DateTime.Now.AddSeconds(-1));
-            Assert.AreEqual($"Bill received {Noobs.Bill.Niblets} Niblets!", interaction.RespondAsyncParams.Text);
+            Assert.AreEqual($"Bill received {Formatting.NibletTerm(Noobs.Bill.Niblets)}!", interaction.RespondAsyncParams.Text);
             Assert.Greater(Noobs.Bill.Niblets, 0);
         }
 
@@ -48,7 +49,7 @@ public class RecurrentCommandTest
             var interaction = await ExecuteDaily(Noobs.BillDiscord);
             Assert.Less(Noobs.BillDaily.ExecutedAt, DateTime.Now.AddSeconds(1));
             Assert.Greater(Noobs.BillDaily.ExecutedAt, DateTime.Now.AddSeconds(-1));
-            Assert.AreEqual($"Bill received {Noobs.Bill.Niblets} Niblets!", interaction.RespondAsyncParams.Text);
+            Assert.AreEqual($"Bill received {Formatting.NibletTerm(Noobs.Bill.Niblets)}!", interaction.RespondAsyncParams.Text);
             Assert.Greater(Noobs.Bill.Niblets, 0);
         }
 
@@ -59,7 +60,7 @@ public class RecurrentCommandTest
             var interaction = await ExecuteDaily(Noobs.BillDiscord);
             Assert.Less(Noobs.BillDaily.ExecutedAt, DateTime.Now.AddSeconds(1));
             Assert.Greater(Noobs.BillDaily.ExecutedAt, DateTime.Now.AddSeconds(-1));
-            Assert.AreEqual($"Bill received {Noobs.Bill.Niblets} Niblets!", interaction.RespondAsyncParams.Text);
+            Assert.AreEqual($"Bill received {Formatting.NibletTerm(Noobs.Bill.Niblets)}!", interaction.RespondAsyncParams.Text);
             Assert.Greater(Noobs.Bill.Niblets, 0);
         }
 
@@ -71,7 +72,7 @@ public class RecurrentCommandTest
             var interaction = await ExecuteDaily(Noobs.BillDiscord);
             Assert.Less(Noobs.BillDaily.ExecutedAt, DateTime.Now.AddSeconds(1));
             Assert.Greater(Noobs.BillDaily.ExecutedAt, DateTime.Now.AddSeconds(-1));
-            Assert.AreEqual($"Bill received {Noobs.Bill.Niblets - 15} Niblets!", interaction.RespondAsyncParams.Text);
+            Assert.AreEqual($"Bill received {Formatting.NibletTerm(Noobs.Bill.Niblets - 15)}!", interaction.RespondAsyncParams.Text);
             Assert.Greater(Noobs.Bill.Niblets, 15);
         }
 
