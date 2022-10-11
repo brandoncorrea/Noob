@@ -36,7 +36,11 @@ public class ShopMenu : IComponentHandler
             {
                 item.Description,
                 Formatting.NibletTerm(item.Price),
-                $"Level {item.Level}"
+                item.Attack > 0 ? $"{item.Attack} Attack" : "",
+                item.Defense > 0 ? $"{item.Defense} Defense" : "",
+                item.Sneak > 0 ? $"{item.Sneak} Sneak" : "",
+                item.Perception > 0 ? $"{item.Perception} Perception" : "",
+                $"Level {item.Level}",
             }.Where(i => !string.IsNullOrWhiteSpace(i));
             menuBuilder.AddOption(
                 item.Name,

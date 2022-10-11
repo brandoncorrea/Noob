@@ -13,6 +13,7 @@ public class SlashCommandHandler
         IUserRepository userRepository,
         IUserCommandRepository userCommandRepository,
         IItemRepository itemRepository,
+        IUserItemRepository userItemRepository,
         IEquippedItemRepository equippedItemRepository)
     {
         SlashCommandHandlers = new ISlashCommandHandler[]
@@ -22,7 +23,7 @@ public class SlashCommandHandler
             new GiveCommand(userRepository),
             new StealCommand(userRepository, itemRepository, equippedItemRepository),
             new StatsCommand(userRepository),
-            new ShopCommand(itemRepository),
+            new ShopCommand(itemRepository, userItemRepository),
             new AttackCommand(userRepository, itemRepository, equippedItemRepository)
         };
         SlashCommands = CreateSlashCommands();

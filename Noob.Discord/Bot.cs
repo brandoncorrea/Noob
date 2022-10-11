@@ -21,6 +21,7 @@ public class Bot
             userRepository,
             userCommandRepository,
             itemRepository,
+            userItemRepository,
             equippedItemRepository);
 
         SelectMenuHandler = new SelectMenuHandler(

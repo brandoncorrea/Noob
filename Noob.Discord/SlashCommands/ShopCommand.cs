@@ -7,10 +7,17 @@ namespace Noob.Discord.SlashCommands;
 
 public class ShopCommand : ISlashCommandHandler
 {
-    private IItemRepository ItemRepository;
     public string CommandName => "shop";
-    public ShopCommand(IItemRepository itemRepository) =>
+    private IItemRepository ItemRepository;
+    private IUserItemRepository UserItemRepository;
+
+    public ShopCommand(
+        IItemRepository itemRepository,
+        IUserItemRepository userItemRepository)
+    {
         ItemRepository = itemRepository;
+        UserItemRepository = userItemRepository;
+    }
 
     public SlashCommandProperties GetSlashCommandProperties() =>
         new SlashCommandBuilder
@@ -21,7 +28,14 @@ public class ShopCommand : ISlashCommandHandler
 
     public async Task HandleAsync(ISlashCommandInteraction command)
     {
-        var items = ItemRepository.FindAll();
+        var excludedItems = UserItemRepository
+            .FindAll(command.User.Id)
+            .Select(item => item.ItemId);
+
+        var items = ItemRepository
+            .FindAll()
+            .Where(item => !excludedItems.Contains(item.Id));
+
         if (items.Any())
             await command.RespondAsync(
                 "Choose an item to purchase.",

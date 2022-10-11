@@ -17,7 +17,7 @@ public class ShopCommandTest
         foreach (var item in Noobs.Db.Items)
             Noobs.ItemRepository.Delete(item);
         var interaction = new InteractionStub(Noobs.BillDiscord);
-        var command = new ShopCommand(Noobs.ItemRepository);
+        var command = new ShopCommand(Noobs.ItemRepository, Noobs.UserItemRepository);
         await command.HandleAsync(interaction);
         Assert.AreEqual("There are no items available to purchase.", interaction.RespondAsyncParams.Text);
         Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
@@ -30,7 +30,7 @@ public class ShopCommandTest
         foreach (var item in Noobs.ItemRepository.FindAll().Where(i => i.Id != Noobs.Stick.Id))
             Noobs.ItemRepository.Delete(item);
         var interaction = new InteractionStub(Noobs.BillDiscord);
-        var command = new ShopCommand(Noobs.ItemRepository);
+        var command = new ShopCommand(Noobs.ItemRepository, Noobs.UserItemRepository);
         await command.HandleAsync(interaction);
 
         SelectMenuComponent menu = (SelectMenuComponent)interaction.RespondAsyncParams.Components.Components.First().Components.First();
@@ -43,7 +43,7 @@ public class ShopCommandTest
         IEnumerable<SelectMenuOption> options = menu.Options;
         Assert.AreEqual("Stick", stickOption.Label);
         Assert.AreEqual("1", stickOption.Value);
-        Assert.AreEqual("A wooden stick. | 10 Niblets | Level 1", stickOption.Description);
+        Assert.AreEqual("A wooden stick. | 10 Niblets | 1 Attack | Level 1", stickOption.Description);
     }
 
     [TestCase]
@@ -55,7 +55,7 @@ public class ShopCommandTest
         foreach (var item in deletions)
             Noobs.ItemRepository.Delete(item);
         var interaction = new InteractionStub(Noobs.BillDiscord);
-        var command = new ShopCommand(Noobs.ItemRepository);
+        var command = new ShopCommand(Noobs.ItemRepository, Noobs.UserItemRepository);
         await command.HandleAsync(interaction);
 
         SelectMenuComponent menu = (SelectMenuComponent)interaction.RespondAsyncParams.Components.Components.First().Components.First();
@@ -70,10 +70,33 @@ public class ShopCommandTest
         IEnumerable<SelectMenuOption> options = menu.Options;
         Assert.AreEqual("Stick", stickOption.Label);
         Assert.AreEqual("1", stickOption.Value);
-        Assert.AreEqual("A wooden stick. | 10 Niblets | Level 1", stickOption.Description);
+        Assert.AreEqual("A wooden stick. | 10 Niblets | 1 Attack | Level 1", stickOption.Description);
         Assert.AreEqual("Shield", shieldOption.Label);
         Assert.AreEqual("2", shieldOption.Value);
-        Assert.AreEqual("Blocks some stuff. | 50 Niblets | Level 2", shieldOption.Description);
+        Assert.AreEqual("Blocks some stuff. | 50 Niblets | 1 Defense | Level 2", shieldOption.Description);
+    }
+
+    [TestCase]
+    public async Task OneItemWithTwoAttributes()
+    {
+        foreach (var item in Noobs.ItemRepository.FindAll().Where(i => i.Id != Noobs.Hat.Id))
+            Noobs.ItemRepository.Delete(item);
+        Noobs.ItemRepository.Save(Noobs.Hat.SetSneak(1).SetPerception(2));
+        var interaction = new InteractionStub(Noobs.BillDiscord);
+        var command = new ShopCommand(Noobs.ItemRepository, Noobs.UserItemRepository);
+        await command.HandleAsync(interaction);
+
+        SelectMenuComponent menu = (SelectMenuComponent)interaction.RespondAsyncParams.Components.Components.First().Components.First();
+        var hatOption = menu.Options.First();
+        Assert.AreEqual("Choose an item to purchase.", interaction.RespondAsyncParams.Text);
+        Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
+        Assert.AreEqual("Select an option", menu.Placeholder);
+        Assert.AreEqual("shop-menu", menu.CustomId);
+        Assert.AreEqual(1, menu.Options.Count);
+        IEnumerable<SelectMenuOption> options = menu.Options;
+        Assert.AreEqual("Hat", hatOption.Label);
+        Assert.AreEqual("6", hatOption.Value);
+        Assert.AreEqual("100 Niblets | 1 Sneak | 2 Perception | Level 1", hatOption.Description);
     }
 
     [TestCase]
@@ -81,7 +104,7 @@ public class ShopCommandTest
     {
         Noobs.ItemRepository.Save(Noobs.Stick.SetDescription(null));
         var interaction = new InteractionStub(Noobs.BillDiscord);
-        var command = new ShopCommand(Noobs.ItemRepository);
+        var command = new ShopCommand(Noobs.ItemRepository, Noobs.UserItemRepository);
         await command.HandleAsync(interaction);
 
         SelectMenuComponent menu = (SelectMenuComponent)interaction.RespondAsyncParams.Components.Components.First().Components.First();
@@ -94,7 +117,7 @@ public class ShopCommandTest
         IEnumerable<SelectMenuOption> options = menu.Options;
         Assert.AreEqual("Stick", stickOption.Label);
         Assert.AreEqual("1", stickOption.Value);
-        Assert.AreEqual("10 Niblets | Level 1", stickOption.Description);
+        Assert.AreEqual("10 Niblets | 1 Attack | Level 1", stickOption.Description);
     }
 
     [TestCase]
@@ -102,7 +125,7 @@ public class ShopCommandTest
     {
         Noobs.ItemRepository.Save(Noobs.Stick.SetDescription(""));
         var interaction = new InteractionStub(Noobs.BillDiscord);
-        var command = new ShopCommand(Noobs.ItemRepository);
+        var command = new ShopCommand(Noobs.ItemRepository, Noobs.UserItemRepository);
         await command.HandleAsync(interaction);
 
         SelectMenuComponent menu = (SelectMenuComponent)interaction.RespondAsyncParams.Components.Components.First().Components.First();
@@ -115,7 +138,7 @@ public class ShopCommandTest
         IEnumerable<SelectMenuOption> options = menu.Options;
         Assert.AreEqual("Stick", stickOption.Label);
         Assert.AreEqual("1", stickOption.Value);
-        Assert.AreEqual("10 Niblets | Level 1", stickOption.Description);
+        Assert.AreEqual("10 Niblets | 1 Attack | Level 1", stickOption.Description);
     }
 
     [TestCase]
@@ -123,7 +146,7 @@ public class ShopCommandTest
     {
         Noobs.ItemRepository.Save(Noobs.Stick.SetDescription("\r\n\t "));
         var interaction = new InteractionStub(Noobs.BillDiscord);
-        var command = new ShopCommand(Noobs.ItemRepository);
+        var command = new ShopCommand(Noobs.ItemRepository, Noobs.UserItemRepository);
         await command.HandleAsync(interaction);
 
         SelectMenuComponent menu = (SelectMenuComponent)interaction.RespondAsyncParams.Components.Components.First().Components.First();
@@ -136,7 +159,7 @@ public class ShopCommandTest
         IEnumerable<SelectMenuOption> options = menu.Options;
         Assert.AreEqual("Stick", stickOption.Label);
         Assert.AreEqual("1", stickOption.Value);
-        Assert.AreEqual("10 Niblets | Level 1", stickOption.Description);
+        Assert.AreEqual("10 Niblets | 1 Attack | Level 1", stickOption.Description);
     }
 
     [TestCase]
@@ -144,7 +167,7 @@ public class ShopCommandTest
     {
         Noobs.ItemRepository.Save(Noobs.Stick.SetPrice(1));
         var interaction = new InteractionStub(Noobs.BillDiscord);
-        var command = new ShopCommand(Noobs.ItemRepository);
+        var command = new ShopCommand(Noobs.ItemRepository, Noobs.UserItemRepository);
         await command.HandleAsync(interaction);
 
         SelectMenuComponent menu = (SelectMenuComponent)interaction.RespondAsyncParams.Components.Components.First().Components.First();
@@ -157,6 +180,27 @@ public class ShopCommandTest
         IEnumerable<SelectMenuOption> options = menu.Options;
         Assert.AreEqual("Stick", stickOption.Label);
         Assert.AreEqual("1", stickOption.Value);
-        Assert.AreEqual("A wooden stick. | 1 Niblet | Level 1", stickOption.Description);
+        Assert.AreEqual("A wooden stick. | 1 Niblet | 1 Attack | Level 1", stickOption.Description);
+    }
+
+    [TestCase]
+    public async Task ExcludesItemsAlreadyOwned()
+    {
+        var interaction = new InteractionStub(Noobs.TedDiscord);
+        var command = new ShopCommand(Noobs.ItemRepository, Noobs.UserItemRepository);
+        await command.HandleAsync(interaction);
+
+        SelectMenuComponent menu = (SelectMenuComponent)interaction
+            .RespondAsyncParams
+            .Components
+            .Components
+            .First()
+            .Components
+            .First();
+
+        var stickOption = menu
+            .Options
+            .FirstOrDefault(item => item.Value == Noobs.TedStick.ItemId.ToString());
+        Assert.IsNull(stickOption);
     }
 }

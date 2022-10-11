@@ -14,6 +14,7 @@ public class SlashCommandHandlerTest
             Noobs.UserRepository,
             Noobs.UserCommandRepository,
             Noobs.ItemRepository,
+            Noobs.UserItemRepository,
             Noobs.EquippedItemRepository)
         .CreateSlashCommands();
 
