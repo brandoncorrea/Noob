@@ -40,7 +40,7 @@ public class AttackCommand : ISlashCommandHandler
 
     private async Task AttemptAttack(ISlashCommandInteraction command, IUser discordTarget)
     {
-        var user = UserRepository.Find(command.User.Id);
+        var user = UserRepository.FindOrCreate(command.User.Id);
         var victim = UserRepository.FindOrCreate(discordTarget.Id);
         if (AttacksSuccessfully(user, victim))
             await AttackTarget(command, discordTarget, user, victim);

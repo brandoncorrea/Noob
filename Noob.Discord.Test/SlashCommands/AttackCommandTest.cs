@@ -75,6 +75,15 @@ public class AttackCommandTest
         Assert.AreEqual(0, Noobs.Ted.Experience);
     }
 
+    [TestCase]
+    public async Task UserDoesNotExist()
+    {
+        Noobs.UserRepository.Delete(Noobs.Bill);
+        var interaction = await Attack(Noobs.BillDiscord, Noobs.TedDiscord);
+        Assert.IsFalse(interaction.RespondAsyncParams.Ephemeral);
+        Assert.IsNotNull(Noobs.Bill.Experience);
+    }
+
     private async Task<InteractionStub> Attack(IUser user, IUser victim)
     {
         var interaction = new InteractionStub(
