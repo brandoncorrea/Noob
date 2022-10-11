@@ -12,17 +12,18 @@ public class SlashCommandHandler
     public SlashCommandHandler(
         IUserRepository userRepository,
         IUserCommandRepository userCommandRepository,
-        IItemRepository itemRepository)
+        IItemRepository itemRepository,
+        IEquippedItemRepository equippedItemRepository)
     {
         SlashCommandHandlers = new ISlashCommandHandler[]
         {
             new DailyCommand(userRepository, userCommandRepository),
             new WeeklyCommand(userRepository, userCommandRepository),
             new GiveCommand(userRepository),
-            new StealCommand(userRepository),
+            new StealCommand(userRepository, itemRepository, equippedItemRepository),
             new StatsCommand(userRepository),
             new ShopCommand(itemRepository),
-            new AttackCommand(userRepository)
+            new AttackCommand(userRepository, itemRepository, equippedItemRepository)
         };
         SlashCommands = CreateSlashCommands();
     }

@@ -6,7 +6,11 @@ public class User
     public int BrowniePoints { get; set; }
     public int Niblets { get; set; }
     public long Experience { get; set; }
+
     public long Level => Experience / 100 + 1;
+
+    public User() { }
+    public User(ulong id) => Id = id;
 
     public User SetNiblets(int niblets)
     {

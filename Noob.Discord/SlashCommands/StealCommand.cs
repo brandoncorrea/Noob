@@ -8,9 +8,18 @@ public class StealCommand : ISlashCommandHandler
 {
     public string CommandName => "steal";
     private IUserRepository UserRepository;
+    private IItemRepository ItemRepository;
+    private IEquippedItemRepository EquippedItemRepository;
 
-    public StealCommand(IUserRepository userRepository) =>
+    public StealCommand(
+        IUserRepository userRepository,
+        IItemRepository itemRepository,
+        IEquippedItemRepository equippedItemRepository)
+    {
         UserRepository = userRepository;
+        ItemRepository = itemRepository;
+        EquippedItemRepository = equippedItemRepository;
+    }
 
     public SlashCommandProperties GetSlashCommandProperties() =>
         new SlashCommandBuilder
@@ -120,9 +129,19 @@ public class StealCommand : ISlashCommandHandler
     {
         var random = new Random();
         var modifier = user.Level - victim.Level;
-        var userRoll = random.Next(1, 20) + modifier;
-        var victimRoll = random.Next(1, 20);
+        var userRoll = random.Next(1, 20) + modifier + GetSneakBonus(user);
+        var victimRoll = random.Next(1, 20) + GetPerceptionBonus(victim);
         return userRoll > victimRoll;
     }
+
+    private int GetPerceptionBonus(User user) =>
+        EquippedItemRepository
+            .EquippedItems(user)
+            .Sum(item => item.Perception);
+
+    private int GetSneakBonus(User user) =>
+        EquippedItemRepository
+            .EquippedItems(user)
+            .Sum(item => item.Sneak);
 }
 

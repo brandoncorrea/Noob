@@ -14,12 +14,14 @@ public class Bot
         IUserRepository userRepository,
         IUserCommandRepository userCommandRepository,
         IItemRepository itemRepository,
-        IUserItemRepository userItemRepository)
+        IUserItemRepository userItemRepository,
+        IEquippedItemRepository equippedItemRepository)
     {
         SlashCommandHandler = new SlashCommandHandler(
             userRepository,
             userCommandRepository,
-            itemRepository);
+            itemRepository,
+            equippedItemRepository);
 
         SelectMenuHandler = new SelectMenuHandler(
             userRepository,

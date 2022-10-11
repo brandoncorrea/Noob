@@ -13,6 +13,7 @@ public abstract class NoobDbContext : DbContext
         modelBuilder.Entity<User>().HasKey(user => new { user.Id });
         modelBuilder.Entity<Item>().HasKey(item => item.Id);
         modelBuilder.Entity<UserItem>().HasKey(item => new { item.UserId, item.ItemId });
+        modelBuilder.Entity<EquippedItem>().HasKey(item => new { item.UserId, item.SlotId });
 
         modelBuilder.Entity<User>()
             .HasMany<UserCommand>()
@@ -24,4 +25,5 @@ public abstract class NoobDbContext : DbContext
     public DbSet<UserCommand> UserCommands { get; set; }
     public DbSet<Item> Items { get; set; }
     public DbSet<UserItem> UserItems { get; set; }
+    public DbSet<EquippedItem> EquippedItems { get; set; }
 }

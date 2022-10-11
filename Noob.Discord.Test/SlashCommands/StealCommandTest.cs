@@ -60,6 +60,35 @@ public class StealCommandTest
     }
 
     [TestCase]
+    public async Task EquipmentWithPlusTwentySneak()
+    {
+        Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(1));
+        Noobs.UserRepository.Save(Noobs.Ted.SetNiblets(50));
+        Noobs.ItemRepository.Save(Noobs.Mittens.SetSneak(20));
+        var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
+        Assert.AreEqual($"You stole {Noobs.Bill.Niblets} Niblets from Ted >:)", interaction.RespondAsyncParams.Text);
+    }
+
+    [TestCase]
+    public async Task EquipmentWithPlusTwentyPerception()
+    {
+        Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(1));
+        Noobs.ItemRepository.Save(Noobs.Stick.SetPerception(20));
+        var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
+        Assert.AreEqual("Bill was caught trying to steal from Ted. What a noob!", interaction.RespondAsyncParams.Text);
+    }
+
+    [TestCase]
+    public async Task TwoItemsPlusTenPerception()
+    {
+        Noobs.UserRepository.Save(Noobs.Ted.SetBrowniePoints(1));
+        Noobs.ItemRepository.Save(Noobs.Mittens.SetPerception(10));
+        Noobs.ItemRepository.Save(Noobs.Slippers.SetPerception(10));
+        var interaction = await Steal(Noobs.TedDiscord, Noobs.BillDiscord);
+        Assert.AreEqual($"Ted was caught trying to steal from Bill. What a noob!", interaction.RespondAsyncParams.Text);
+    }
+
+    [TestCase]
     public async Task TargetHasNoNiblets()
     {
         Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(1).SetExperience(2100));
@@ -127,7 +156,11 @@ public class StealCommandTest
             new (string, object)[] { ("victim", victim) }
         );
 
-        await new StealCommand(Noobs.UserRepository).HandleAsync(interaction);
+        await new StealCommand(
+                Noobs.UserRepository,
+                Noobs.ItemRepository,
+                Noobs.EquippedItemRepository)
+            .HandleAsync(interaction);
         return interaction;
     }
 }

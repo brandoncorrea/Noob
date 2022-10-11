@@ -14,9 +14,8 @@ public class ShopCommandTest
     [TestCase]
     public async Task NoItemsAvailable()
     {
-        Noobs.ItemRepository.Delete(Noobs.Stick);
-        Noobs.ItemRepository.Delete(Noobs.Shield);
-        Noobs.ItemRepository.Delete(Noobs.Crowbar);
+        foreach (var item in Noobs.Db.Items)
+            Noobs.ItemRepository.Delete(item);
         var interaction = new InteractionStub(Noobs.BillDiscord);
         var command = new ShopCommand(Noobs.ItemRepository);
         await command.HandleAsync(interaction);
@@ -28,15 +27,14 @@ public class ShopCommandTest
     [TestCase]
     public async Task OneItemAvailable()
     {
-        Noobs.ItemRepository.Delete(Noobs.Shield);
-        Noobs.ItemRepository.Delete(Noobs.Crowbar);
+        foreach (var item in Noobs.ItemRepository.FindAll().Where(i => i.Id != Noobs.Stick.Id))
+            Noobs.ItemRepository.Delete(item);
         var interaction = new InteractionStub(Noobs.BillDiscord);
         var command = new ShopCommand(Noobs.ItemRepository);
         await command.HandleAsync(interaction);
 
         SelectMenuComponent menu = (SelectMenuComponent)interaction.RespondAsyncParams.Components.Components.First().Components.First();
         var stickOption = menu.Options.First();
-
         Assert.AreEqual("Choose an item to purchase.", interaction.RespondAsyncParams.Text);
         Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
         Assert.AreEqual("Select an option", menu.Placeholder);
@@ -51,7 +49,11 @@ public class ShopCommandTest
     [TestCase]
     public async Task TwoItemsAvailable()
     {
-        Noobs.ItemRepository.Delete(Noobs.Crowbar);
+        var deletions = Noobs.ItemRepository
+            .FindAll()
+            .Where(i => i.Id != Noobs.Stick.Id && i.Id != Noobs.Shield.Id);
+        foreach (var item in deletions)
+            Noobs.ItemRepository.Delete(item);
         var interaction = new InteractionStub(Noobs.BillDiscord);
         var command = new ShopCommand(Noobs.ItemRepository);
         await command.HandleAsync(interaction);

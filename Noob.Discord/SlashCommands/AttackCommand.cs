@@ -8,9 +8,18 @@ public class AttackCommand : ISlashCommandHandler
 {
     public string CommandName => "attack";
     private IUserRepository UserRepository;
+    private IItemRepository ItemRepository;
+    private IEquippedItemRepository EquippedItemRepository;
 
-    public AttackCommand(IUserRepository userRepository) =>
+    public AttackCommand(
+        IUserRepository userRepository,
+        IItemRepository itemRepository,
+        IEquippedItemRepository equippedItemRepository)
+    {
         UserRepository = userRepository;
+        ItemRepository = itemRepository;
+        EquippedItemRepository = equippedItemRepository;
+    }
 
     public SlashCommandProperties GetSlashCommandProperties() =>
         new SlashCommandBuilder
@@ -87,9 +96,14 @@ public class AttackCommand : ISlashCommandHandler
     {
         var random = new Random();
         var modifier = user.Level - victim.Level;
-        var userRoll = random.Next(1, 20) + modifier;
-        var victimRoll = random.Next(1, 20);
+        var userRoll = random.Next(1, 20) + modifier + GetAttackBonus(user);
+        var victimRoll = random.Next(1, 20) + GetDefenseBonus(victim);
         return userRoll > victimRoll;
     }
+
+    private int GetDefenseBonus(User user) =>
+        EquippedItemRepository.EquippedItems(user).Sum(item => item.Defense);
+    private int GetAttackBonus(User user) =>
+        EquippedItemRepository.EquippedItems(user).Sum(item => item.Attack);
 }
 

@@ -41,6 +41,31 @@ public class AttackCommandTest
     }
 
     [TestCase]
+    public async Task EquipmentWithPlusTwentyAttack()
+    {
+        Noobs.ItemRepository.Save(Noobs.Stick.SetAttack(20));
+        var interaction = await Attack(Noobs.TedDiscord, Noobs.BillDiscord);
+        Assert.AreEqual("Ted just beat the living daylights out of Bill!", interaction.RespondAsyncParams.Text);
+    }
+
+    [TestCase]
+    public async Task EquipmentWithPlusTwentyDefense()
+    {
+        Noobs.ItemRepository.Save(Noobs.Mittens.SetDefense(20));
+        var interaction = await Attack(Noobs.TedDiscord, Noobs.BillDiscord);
+        Assert.AreEqual("Ted tried attacking Bill and got PWND!", interaction.RespondAsyncParams.Text);
+    }
+
+    [TestCase]
+    public async Task TwoItemsPlusTenDefense()
+    {
+        Noobs.ItemRepository.Save(Noobs.Mittens.SetDefense(10));
+        Noobs.ItemRepository.Save(Noobs.Slippers.SetDefense(10));
+        var interaction = await Attack(Noobs.TedDiscord, Noobs.BillDiscord);
+        Assert.AreEqual("Ted tried attacking Bill and got PWND!", interaction.RespondAsyncParams.Text);
+    }
+
+    [TestCase]
     public async Task TwentyLevelsAbove()
     {
         Noobs.UserRepository.Save(Noobs.Bill.SetExperience(2000));
@@ -91,7 +116,11 @@ public class AttackCommandTest
             new (string, object)[] { ("victim", victim) }
         );
 
-        await new AttackCommand(Noobs.UserRepository).HandleAsync(interaction);
+        await new AttackCommand(
+                Noobs.UserRepository,
+                Noobs.ItemRepository,
+                Noobs.EquippedItemRepository)
+            .HandleAsync(interaction);
         return interaction;
     }
 }

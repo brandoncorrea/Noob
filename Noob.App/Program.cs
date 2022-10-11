@@ -10,11 +10,13 @@ public class Program
         {
             Migration.Migrate(db);
 
+            var itemRepository = new DbContextItemRepository(db);
             await new Bot(
                 new DbContextUserRepository(db),
                 new DbContextUserCommandRepository(db),
-                new DbContextItemRepository(db),
-                new DbContextUserItemRepository(db))
+                itemRepository,
+                new DbContextUserItemRepository(db),
+                new DbContextEquippedItemRepository(db, itemRepository))
                 .StartAsync(File.ReadAllText("discord.token"));
 
             await Task.Delay(-1);
