@@ -86,6 +86,15 @@ public class StealCommandTest
     }
 
     [TestCase]
+    public async Task UserDoesNotExist()
+    {
+        Noobs.UserRepository.Delete(Noobs.Bill);
+        var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
+        Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
+        Assert.IsNotNull(Noobs.Bill);
+    }
+
+    [TestCase]
     public async Task StealsOneNiblet()
     {
         Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(2).SetExperience(2100));

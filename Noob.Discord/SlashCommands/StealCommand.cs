@@ -36,7 +36,7 @@ public class StealCommand : ISlashCommandHandler
             await command.RespondAsync("You want to steal from... yourself?!", ephemeral: true);
         else
         {
-            var user = UserRepository.Find(command.User.Id);
+            var user = UserRepository.FindOrCreate(command.User.Id);
             if (user.BrowniePoints <= 0)
                 await command.RespondAsync("You need Brownie Points to steal from other players.", ephemeral: true);
             else
