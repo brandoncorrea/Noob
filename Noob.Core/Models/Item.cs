@@ -43,6 +43,12 @@ public class Item
         return this;
     }
 
+    public Item SetSlotId(int slotId)
+    {
+        SlotId = slotId;
+        return this;
+    }
+
     public Item SetSneak(int sneak)
     {
         Sneak = sneak;

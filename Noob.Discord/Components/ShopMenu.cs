@@ -35,6 +35,7 @@ public class ShopMenu : IComponentHandler
             var descriptors = new string[]
             {
                 item.Description,
+                Formatting.ItemSlotName(item.SlotId),
                 Formatting.NibletTerm(item.Price),
                 item.Attack > 0 ? $"{item.Attack} Attack" : "",
                 item.Defense > 0 ? $"{item.Defense} Defense" : "",

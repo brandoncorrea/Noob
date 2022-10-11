@@ -96,7 +96,7 @@ public static class Noobs
             Description = "",
             Price = 100,
             Level = 1,
-            Perception = 1
+            Perception = 1,
         };
 
         var tedStick = new UserItem(ted, stick);

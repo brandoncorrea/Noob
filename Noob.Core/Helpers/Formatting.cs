@@ -28,4 +28,18 @@ public static class Formatting
         niblets == 1 ? "1 Niblet" : $"{niblets} Niblets";
     public static string BrownieTerm(int browniePoints) =>
         browniePoints == 1 ? "1 Brownie Point" : $"{browniePoints} Brownie Points";
+
+    public static Dictionary<int, string> ItemSlotNames = new Dictionary<int, string>
+    {
+        { 1, "Main Hand" },
+        { 2, "Off-Hand" },
+        { 3, "Head" },
+        { 4, "Torso" },
+        { 5, "Legs" },
+        { 6, "Hands" },
+        { 7, "Feet" },
+        { 8, "Back" },
+    };
+
+    public static string ItemSlotName(int slotId) => ItemSlotNames.GetValueOrDefault(slotId);
 }
