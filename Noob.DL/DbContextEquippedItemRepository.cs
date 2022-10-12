@@ -30,6 +30,7 @@ namespace Noob.DL
                 Db.EquippedItems.Update(equippedItem);
             else
                 Db.EquippedItems.Add(equippedItem);
+            Db.SaveChanges();
         }
 
         public IEnumerable<Item> EquippedItems(User user) =>
@@ -38,6 +39,17 @@ namespace Noob.DL
                 .AsEnumerable()
                 .Select(item => ItemRepository.Find(item.ItemId))
                 .Where(item => item != null);
+
+        public void Unequip(User user, Item item)
+        {
+            var equipped = Db.EquippedItems.FirstOrDefault(i =>
+                i.ItemId == item.Id &&
+                i.SlotId == item.SlotId &&
+                i.UserId == user.Id);
+            if (equipped == null) return;
+            Db.EquippedItems.Remove(equipped);
+            Db.SaveChanges();
+        }
     }
 }
 

@@ -24,10 +24,10 @@ public static class Formatting
         return $"{timeDifference.Minutes} {minuteTerm}";
     }
 
-    public static string NibletTerm(int niblets) =>
-        niblets == 1 ? "1 Niblet" : $"{niblets} Niblets";
-    public static string BrownieTerm(int browniePoints) =>
-        browniePoints == 1 ? "1 Brownie Point" : $"{browniePoints} Brownie Points";
+    public static string AsPlural(this string unitText, int count) =>
+        count == 1 ? $"{count} {unitText}" : $"{count} {unitText}s";
+    public static string NibletTerm(int niblets) => AsPlural("Niblet", niblets);
+    public static string BrownieTerm(int browniePoints) => AsPlural("Brownie Point", browniePoints);
 
     public static Dictionary<int, string> ItemSlotNames = new Dictionary<int, string>
     {
@@ -42,4 +42,11 @@ public static class Formatting
     };
 
     public static string ItemSlotName(int slotId) => ItemSlotNames.GetValueOrDefault(slotId);
+
+    public static bool IsNotNullOrWhitespace(string s) =>
+        !string.IsNullOrWhiteSpace(s);
+    public static IEnumerable<string> TakePopulated(this IEnumerable<string> lines) =>
+        lines.Where(IsNotNullOrWhitespace);
+    public static IEnumerable<string> TakePopulated(params string[] lines) =>
+        lines.TakePopulated();
 }

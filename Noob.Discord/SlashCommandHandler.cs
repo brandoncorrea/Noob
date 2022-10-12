@@ -24,7 +24,8 @@ public class SlashCommandHandler
             new StealCommand(userRepository, itemRepository, equippedItemRepository),
             new StatsCommand(userRepository),
             new ShopCommand(itemRepository, userItemRepository),
-            new AttackCommand(userRepository, itemRepository, equippedItemRepository)
+            new AttackCommand(userRepository, itemRepository, equippedItemRepository),
+            new InventoryCommand(userRepository, itemRepository, userItemRepository, equippedItemRepository)
         };
         SlashCommands = CreateSlashCommands();
     }
@@ -32,7 +33,7 @@ public class SlashCommandHandler
     public IEnumerable<SlashCommandProperties> CreateSlashCommands() =>
         SlashCommandHandlers.Select(h => h.GetSlashCommandProperties());
 
-    public async Task Handle(ISlashCommandInteraction command)
+    public async Task HandleAsync(ISlashCommandInteraction command)
     {
         var handler = SlashCommandHandlers.FirstOrDefault(h => h.CommandName == command.Data.Name);
         if (handler == null) return;

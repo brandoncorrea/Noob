@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Remove="Discord.Net" />
+    <None Remove="Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="3.8.1" />
@@ -15,5 +16,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Noob.Core\Noob.Core.csproj" />
     <ProjectReference Include="..\Noob.DL\Noob.DL.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Helpers\" />
   </ItemGroup>
 </Project>

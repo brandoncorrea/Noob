@@ -8,4 +8,5 @@ public interface IUserItemRepository
     UserItem Create(User user, Item item);
     UserItem Find(User user, Item item) => Find(user.Id, item.Id);
     bool Exists(User user, Item item) => Find(user, item) != null;
+    UserItem Dissociate(User user, Item item);
 }

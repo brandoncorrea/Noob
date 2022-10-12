@@ -9,6 +9,7 @@ public class Bot
     private DiscordSocketClient Client;
     private SlashCommandHandler SlashCommandHandler;
     private SelectMenuHandler SelectMenuHandler;
+    private ButtonHandler ButtonHandler;
 
     public Bot(
         IUserRepository userRepository,
@@ -28,14 +29,21 @@ public class Bot
             userRepository,
             itemRepository,
             userItemRepository);
+
+        ButtonHandler = new ButtonHandler(
+            userRepository,
+            itemRepository,
+            userItemRepository,
+            equippedItemRepository);
     }
 
     public async Task StartAsync(string token)
     {
         Client = new DiscordSocketClient();
         Client.Log += Log;
-        Client.SlashCommandExecuted += SlashCommandHandler.Handle;
+        Client.SlashCommandExecuted += SlashCommandHandler.HandleAsync;
         Client.SelectMenuExecuted += SelectMenuHandler.HandleAsync;
+        Client.ButtonExecuted += ButtonHandler.HandleAsync;
         Client.JoinedGuild += SlashCommandHandler.RegisterGuild;
         Client.Ready += ClientReady;
         await Client.LoginAsync(TokenType.Bot, token);

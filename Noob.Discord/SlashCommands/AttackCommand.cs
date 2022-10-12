@@ -26,7 +26,7 @@ public class AttackCommand : ISlashCommandHandler
         {
             Name = CommandName,
             Description = "Attack another player!",
-            Options = new List<SlashCommandOptionBuilder>()
+            Options = new List<SlashCommandOptionBuilder>
             {
                 new SlashCommandOptionBuilder
                 {
@@ -96,14 +96,8 @@ public class AttackCommand : ISlashCommandHandler
     {
         var random = new Random();
         var modifier = user.Level - victim.Level;
-        var userRoll = random.Next(1, 20) + modifier + GetAttackBonus(user);
-        var victimRoll = random.Next(1, 20) + GetDefenseBonus(victim);
+        var userRoll = random.Next(1, 20) + modifier + EquippedItemRepository.AttackBonus(user);
+        var victimRoll = random.Next(1, 20) + EquippedItemRepository.DefenseBonus(victim);
         return userRoll > victimRoll;
     }
-
-    private int GetDefenseBonus(User user) =>
-        EquippedItemRepository.EquippedItems(user).Sum(item => item.Defense);
-    private int GetAttackBonus(User user) =>
-        EquippedItemRepository.EquippedItems(user).Sum(item => item.Attack);
 }
-

@@ -22,5 +22,13 @@ public class DbContextUserItemRepository : IUserItemRepository
         return userItem;
     }
 
+    public UserItem Dissociate(User user, Item item)
+    {
+        var userItem = Find(user.Id, item.Id);
+        if (userItem == null) return null;
+        var removed = Db.UserItems.Remove(userItem).Entity;
+        Db.SaveChanges();
+        return removed;
+    }
 }
 

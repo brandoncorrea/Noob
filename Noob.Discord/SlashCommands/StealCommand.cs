@@ -26,7 +26,7 @@ public class StealCommand : ISlashCommandHandler
         {
             Name = CommandName,
             Description = "Steal Niblets from another player!",
-            Options = new List<SlashCommandOptionBuilder>()
+            Options = new List<SlashCommandOptionBuilder>
             {
                 new SlashCommandOptionBuilder
                 {
@@ -129,19 +129,8 @@ public class StealCommand : ISlashCommandHandler
     {
         var random = new Random();
         var modifier = user.Level - victim.Level;
-        var userRoll = random.Next(1, 20) + modifier + GetSneakBonus(user);
-        var victimRoll = random.Next(1, 20) + GetPerceptionBonus(victim);
+        var userRoll = random.Next(1, 20) + modifier + EquippedItemRepository.SneakBonus(user);
+        var victimRoll = random.Next(1, 20) + EquippedItemRepository.PerceptionBonus(victim);
         return userRoll > victimRoll;
     }
-
-    private int GetPerceptionBonus(User user) =>
-        EquippedItemRepository
-            .EquippedItems(user)
-            .Sum(item => item.Perception);
-
-    private int GetSneakBonus(User user) =>
-        EquippedItemRepository
-            .EquippedItems(user)
-            .Sum(item => item.Sneak);
 }
-

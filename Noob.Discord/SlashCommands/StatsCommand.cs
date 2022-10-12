@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Noob.Discord.Helpers;
 using Noob.DL;
 namespace Noob.Discord.SlashCommands;
 
@@ -20,12 +21,12 @@ public class StatsCommand : ISlashCommandHandler
     {
         var user = UserRepository.FindOrCreate(command.User.Id);
         var embed = new EmbedBuilder()
-            .WithAuthor(command.User.Username, command.User.GetAvatarUrl() ?? command.User.GetDefaultAvatarUrl())
+            .WithSimpleAuthor(command.User)
             .WithTitle("Stats")
             .WithDescription(
-                $"Niblets: {user.Niblets}\n" +
-                $"Brownie Points: {user.BrowniePoints}\n" +
-                $"Level: {user.Level}\n" +
+                $"Niblets: {user.Niblets}",
+                $"Brownie Points: {user.BrowniePoints}",
+                $"Level: {user.Level}",
                 $"Experience: {user.Experience}")
             .WithColor(Color.Green)
             .Build();

@@ -2,6 +2,7 @@
 using Microsoft.VisualBasic;
 using Noob.Core.Helpers;
 using Noob.Core.Models;
+using Noob.Discord.Helpers;
 using Noob.DL;
 namespace Noob.Discord.Components;
 
@@ -24,16 +25,19 @@ public class ShopMenu : IComponentHandler
         UserItemRepository = userItemRepository;
     }
 
-    public MessageComponent Render(IEnumerable<Item> items)
-    {
-        var menuBuilder = new SelectMenuBuilder()
+    public MessageComponent Render(IEnumerable<Item> items) =>
+        new ComponentBuilder()
+        .WithSelectMenu(new SelectMenuBuilder()
             .WithPlaceholder("Select an option")
-            .WithCustomId(CustomId);
+            .WithCustomId(CustomId)
+            .AddOptions(items.Select(CreateMenuOption)))
+        .Build();
 
-        foreach (var item in items)
-        {
-            var descriptors = new string[]
-            {
+    private SelectMenuOptionBuilder CreateMenuOption(Item item) =>
+        new SelectMenuOptionBuilder(
+            item.Name,
+            item.Id.ToString(),
+            Formatting.TakePopulated(
                 item.Description,
                 Formatting.ItemSlotName(item.SlotId),
                 Formatting.NibletTerm(item.Price),
@@ -41,23 +45,13 @@ public class ShopMenu : IComponentHandler
                 item.Defense > 0 ? $"{item.Defense} Defense" : "",
                 item.Sneak > 0 ? $"{item.Sneak} Sneak" : "",
                 item.Perception > 0 ? $"{item.Perception} Perception" : "",
-                $"Level {item.Level}",
-            }.Where(i => !string.IsNullOrWhiteSpace(i));
-            menuBuilder.AddOption(
-                item.Name,
-                item.Id.ToString(),
-                string.Join(" | ", descriptors));
-        }
-
-        return new ComponentBuilder()
-            .WithSelectMenu(menuBuilder)
-            .Build();
-    }
+                $"Level {item.Level}")
+            .Join(" | "));
 
     public async Task HandleAsync(IComponentInteraction interaction)
     {
         var user = UserRepository.FindOrCreate(interaction.User.Id);
-        var item = FindById(interaction.Data.Values.FirstOrDefault());
+        var item = ItemRepository.Find(interaction.Data.Values.FirstOrDefault());
         if (item == null)
             await interaction.RespondAsync("This item does not seem to exist.", ephemeral: true);
         else if (UserItemRepository.Exists(user, item))
@@ -74,10 +68,4 @@ public class ShopMenu : IComponentHandler
             await interaction.RespondAsync($"{item.Name} has been added to your inventory!", ephemeral: true);
         }
     }
-
-    public Item FindById(string id) =>
-        int.TryParse(id, out int itemId)
-        ? ItemRepository.Find(itemId)
-        : null;
 }
-
