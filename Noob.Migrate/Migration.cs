@@ -5,21 +5,22 @@ namespace Noob.Migrate;
 public class Migration
 {
     const string MigrationHistoryPath = "./migrations.txt";
+    const string MigrationLogPath = "./migrations.log";
 
     public static void Migrate(NoobDbContext db)
     {
-        Console.WriteLine("Getting Applied Migrations...");
+        Log("Getting Applied Migrations...");
         var applied = GetAppliedMigrations();
-        Console.WriteLine("Looking for Migrations...");
+        Log("Looking for Migrations...");
         foreach (var migration in GetMigrations())
             MigrateIfNotApplied(applied, migration, db);
-        Console.WriteLine("Migrate Complete.");
+        Log("Migrate Complete.");
     }
 
     public static void MigrateIfNotApplied(string[] applied, Type migration, NoobDbContext db)
     {
         if (applied.Any(name => name == migration.FullName))
-            Console.WriteLine($"Skipping {migration.FullName}");
+            Log($"Skipping {migration.FullName}");
         else
             ExecuteMigration(migration, db);
     }
@@ -28,16 +29,17 @@ public class Migration
     {
         try
         {
-            Console.WriteLine($"Migrating {migration.FullName}");
+            Log($"Migrating {migration.FullName}");
             ((IMigration)Activator.CreateInstance(migration)).Migrate(db);
-            Console.WriteLine($"Succeeded {migration.FullName}");
+            Log($"Succeeded {migration.FullName}");
             File.AppendAllText(MigrationHistoryPath, $"{migration.FullName}\n");
         }
         catch(Exception ex)
         {
-            Console.WriteLine($"Migration Failed! {migration.FullName}");
-            Console.WriteLine($"Message: {ex.Message}");
-            Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+            Log($"Migration Failed! {migration.FullName}");
+            Log($"Message: {ex.Message}");
+            Log($"Stack Trace: {ex.StackTrace}");
+            throw;
         }
     }
 
@@ -51,4 +53,7 @@ public class Migration
             .SelectMany(s => s.GetTypes())
             .Where(p => type.IsAssignableFrom(p) && !p.IsInterface);
     }
+
+    private static void Log(string message) =>
+        File.AppendAllText(MigrationLogPath, $"{DateTime.Now} | {message}\n");
 }
