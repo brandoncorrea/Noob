@@ -1,6 +1,10 @@
 # Noob.API
 Noob Discord Bot
 
+Use this link to add it to your server!
+
+https://discord.com/api/oauth2/authorize?client_id=1027797501660643368&permissions=0&scope=bot%20applications.commands
+
 ## Getting Started
 
 Clone this repo and initialize some files. You will need your Discord Bot's Token.
