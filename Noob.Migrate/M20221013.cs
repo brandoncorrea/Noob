@@ -81,9 +81,12 @@ public class M20221013 : IMigration
 
         var stick = db.Items.FirstOrDefault(i => i.Name == "Stick");
         stick.SlotId = ItemSlot.OffHand.Id;
-        var equippedItems = db.EquippedItems
+
+        var equippedItemsOld = db.EquippedItems
             .Where(i => i.ItemId == stick.Id)
-            .AsEnumerable()
+            .AsEnumerable();
+
+        var equippedItemsNew = equippedItemsOld
             .Select(item =>
             {
                 item.SlotId = stick.SlotId;
@@ -92,7 +95,8 @@ public class M20221013 : IMigration
 
         db.Items.AddRange(items);
         db.Items.Update(stick);
-        db.EquippedItems.UpdateRange(equippedItems);
+        db.EquippedItems.RemoveRange(equippedItemsOld);
+        db.EquippedItems.AddRange(equippedItemsNew);
         db.SaveChanges();
     }
 }
