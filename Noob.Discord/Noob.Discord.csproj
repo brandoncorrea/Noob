@@ -9,9 +9,12 @@
   <ItemGroup>
     <None Remove="Discord.Net" />
     <None Remove="Helpers\" />
+    <None Remove="Microsoft.Extensions.DependencyInjection" />
+    <None Remove="Modules\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="3.8.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Noob.Core\Noob.Core.csproj" />
@@ -19,5 +22,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
+    <Folder Include="Modules\" />
   </ItemGroup>
 </Project>

@@ -19,6 +19,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="db\" />
+    <None Remove="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="db\" />

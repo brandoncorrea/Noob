@@ -1,51 +1,57 @@
-﻿using Discord;
+﻿//using System.Reflection;
+using Discord;
+//using Discord.Interactions;
 using Discord.WebSocket;
-using Noob.Discord.SlashCommands;
+using Microsoft.Extensions.DependencyInjection;
+//using Noob.Discord.Modules;
+//using Noob.Discord.SlashCommands;
 using Noob.DL;
 namespace Noob.Discord;
 
+/// <summary>
+/// TODO: Figure out how to test Modules and move slash commands out to there
+/// Once that's done, uncomment all the pending code in this file
+/// </summary>
 public class Bot
 {
     private DiscordSocketClient Client;
-    private SlashCommandHandler SlashCommandHandler;
-    private SelectMenuHandler SelectMenuHandler;
-    private ButtonHandler ButtonHandler;
+    //private InteractionService Interactions;
+    private readonly IServiceProvider ServiceProvider;
 
     public Bot(
         IUserRepository userRepository,
         IUserCommandRepository userCommandRepository,
         IItemRepository itemRepository,
         IUserItemRepository userItemRepository,
-        IEquippedItemRepository equippedItemRepository)
-    {
-        SlashCommandHandler = new SlashCommandHandler(
-            userRepository,
-            userCommandRepository,
-            itemRepository,
-            userItemRepository,
-            equippedItemRepository);
-
-        SelectMenuHandler = new SelectMenuHandler(
-            userRepository,
-            itemRepository,
-            userItemRepository);
-
-        ButtonHandler = new ButtonHandler(
-            userRepository,
-            itemRepository,
-            userItemRepository,
-            equippedItemRepository);
-    }
+        IEquippedItemRepository equippedItemRepository) =>
+        ServiceProvider = new ServiceCollection()
+            .AddSingleton(new DiscordSocketConfig
+            {
+                GatewayIntents = GatewayIntents.AllUnprivileged
+            })
+            .AddSingleton<DiscordSocketClient>()
+            //.AddSingleton<InteractionService>()
+            .AddSingleton<IUserRepository>(userRepository)
+            .AddSingleton< IUserCommandRepository>(userCommandRepository)
+            .AddSingleton<IItemRepository>(itemRepository)
+            .AddSingleton<IUserItemRepository>(userItemRepository)
+            .AddSingleton<IEquippedItemRepository>(equippedItemRepository)
+            .AddSingleton<SlashCommandHandler>()
+            .AddSingleton<SelectMenuHandler>()
+            .AddSingleton<ButtonHandler>()
+            .BuildServiceProvider();
 
     public async Task StartAsync(string token)
     {
-        Client = new DiscordSocketClient();
+        //Interactions = ServiceProvider.GetRequiredService<InteractionService>();
+        Client = ServiceProvider.GetRequiredService<DiscordSocketClient>();
         Client.Log += Log;
-        Client.SlashCommandExecuted += SlashCommandHandler.HandleAsync;
-        Client.SelectMenuExecuted += SelectMenuHandler.HandleAsync;
-        Client.ButtonExecuted += ButtonHandler.HandleAsync;
-        Client.JoinedGuild += SlashCommandHandler.RegisterGuild;
+        Client.SlashCommandExecuted += ServiceProvider.GetRequiredService<SlashCommandHandler>().HandleAsync;
+        Client.SelectMenuExecuted += ServiceProvider.GetRequiredService<SelectMenuHandler>().HandleAsync;
+        Client.ButtonExecuted += ServiceProvider.GetRequiredService<ButtonHandler>().HandleAsync;
+        Client.JoinedGuild += ServiceProvider.GetRequiredService<SlashCommandHandler>().RegisterGuild;
         Client.Ready += ClientReady;
+        //await RegisterCommandsAsync();
         await Client.LoginAsync(TokenType.Bot, token);
         await Client.StartAsync();
     }
@@ -53,8 +59,23 @@ public class Bot
     private async Task ClientReady()
     {
         foreach (var guild in Client.Guilds)
-            await SlashCommandHandler.RegisterGuild(guild);
+            await ServiceProvider.GetRequiredService<SlashCommandHandler>().RegisterGuild(guild);
+            // TODO: Figure out how to test Modules and move slash commands in that direction
+            //await Interactions.RegisterCommandsToGuildAsync(guild.Id);
     }
+
+    // TODO: Figure out how to test Modules and move slash commands in that direction
+    //private async Task RegisterCommandsAsync()
+    //{
+    //    await Interactions.AddModulesAsync(Assembly.GetExecutingAssembly(), ServiceProvider);
+    //    Client.InteractionCreated += HandleInteractionAsync;
+    //}
+
+    //private async Task HandleInteractionAsync(SocketInteraction arg)
+    //{
+    //    var context = new SocketInteractionContext(Client, arg);
+    //    await Interactions.ExecuteCommandAsync(context, ServiceProvider);
+    //}
 
     private Task Log(LogMessage msg)
     {
