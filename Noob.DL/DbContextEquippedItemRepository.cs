@@ -19,17 +19,17 @@ namespace Noob.DL
         public IEnumerable<EquippedItem> FindByUser(User user) =>
             Db.EquippedItems.Where(item => item.UserId == user.Id);
 
-        public bool IsSlotted(User user, int slotId) =>
+        public EquippedItem ForSlot(User user, int slotId) =>
             Db.EquippedItems.FirstOrDefault(i =>
-                i.UserId == user.Id && i.SlotId == i.SlotId) != null;
+                i.UserId == user.Id && i.SlotId == slotId);
 
         public void Equip(User user, Item item)
         {
             var equippedItem = new EquippedItem(user, item);
-            if (IsSlotted(user, item.SlotId))
-                Db.EquippedItems.Update(equippedItem);
-            else
-                Db.EquippedItems.Add(equippedItem);
+            var existing = ForSlot(user, item.SlotId);
+            if (existing != null)
+                Db.EquippedItems.Remove(existing);
+            Db.EquippedItems.Add(equippedItem);
             Db.SaveChanges();
         }
 
@@ -50,6 +50,10 @@ namespace Noob.DL
             Db.EquippedItems.Remove(equipped);
             Db.SaveChanges();
         }
+
+        public bool IsEquipped(User user, Item item) =>
+            Db.EquippedItems.FirstOrDefault(i =>
+                i.UserId == user.Id && i.ItemId == item.Id) != null;
     }
 }
 

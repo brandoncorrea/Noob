@@ -9,10 +9,11 @@ namespace Noob.DL
         void Unequip(User user, Item item);
         IEnumerable<EquippedItem> FindByUser(User user);
         IEnumerable<Item> EquippedItems(User user);
-        bool IsSlotted(User user, int slotId);
+        EquippedItem ForSlot(User user, int slotId);
         int DefenseBonus(User user) => EquippedItems(user).Sum(i => i.Defense);
         int AttackBonus(User user) => EquippedItems(user).Sum(i => i.Attack);
         int SneakBonus(User user) => EquippedItems(user).Sum(i => i.Sneak);
         int PerceptionBonus(User user) => EquippedItems(user).Sum(i => i.Perception);
+        bool IsEquipped(User user, Item item);
     }
 }

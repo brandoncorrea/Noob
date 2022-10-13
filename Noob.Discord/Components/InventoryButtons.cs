@@ -9,6 +9,11 @@ public class InventoryButtons : IComponentHandler
 {
     public string CustomId => "inventory-item-button";
 
+    private IUserRepository UserRepository;
+    private IItemRepository ItemRepository;
+    private IUserItemRepository UserItemRepository;
+    private IEquippedItemRepository EquippedItemRepository;
+
     public InventoryButtons() { }
 
     public InventoryButtons(
@@ -17,7 +22,10 @@ public class InventoryButtons : IComponentHandler
         IUserItemRepository userItemRepository,
         IEquippedItemRepository equippedItemRepository)
     {
-
+        UserRepository = userRepository;
+        ItemRepository = itemRepository;
+        UserItemRepository = userItemRepository;
+        EquippedItemRepository = equippedItemRepository;
     }
 
     public MessageComponent Render(User user, IEnumerable<Item> inventory, IEnumerable<Item> equippedItems) =>
@@ -41,9 +49,38 @@ public class InventoryButtons : IComponentHandler
                 : user.Level >= item.Level ? ButtonStyle.Primary
                 : ButtonStyle.Secondary);
 
-    public Task HandleAsync(IComponentInteraction interaction)
+    public async Task HandleAsync(IComponentInteraction interaction)
     {
-        throw new NotImplementedException();
+        var user = UserRepository.FindOrCreate(interaction.User.Id);
+        var item = GetReferencedItem(interaction.Data.CustomId);
+        if (item == null)
+            await interaction.RespondAsync("This item does not seem to exist.", ephemeral: true);
+        else if (EquippedItemRepository.IsEquipped(user, item))
+        {
+            EquippedItemRepository.Unequip(user, item);
+            await interaction.RespondAsync($"{item.Name} has been unequipped.", ephemeral: true);
+        }
+        else if (!UserItemRepository.Exists(user, item))
+            await interaction.RespondAsync("You do not own this item.", ephemeral: true);
+        else if (user.Level < item.Level)
+            await interaction.RespondAsync($"You must be level {item.Level} to equip this item.", ephemeral: true);
+        else
+        {
+            EquippedItemRepository.Equip(user, item);
+            await interaction.RespondAsync($"{item.Name} has been equipped.", ephemeral: true);
+        }
+    }
+
+    private Item GetReferencedItem(string customId)
+    {
+        try
+        {
+            return ItemRepository.Find(int.Parse(customId.Split(':')[1]));
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
 }
 

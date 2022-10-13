@@ -31,6 +31,12 @@ public class Item
         return this;
     }
 
+    public Item SetLevel(int level)
+    {
+        Level = level;
+        return this;
+    }
+
     public Item SetPerception(int perception)
     {
         Perception = perception;

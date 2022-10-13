@@ -93,6 +93,16 @@ public class ComponentInteractionStub : IComponentInteraction
         User = user;
     }
 
+    public ComponentInteractionStub(IUser user, string customId, string value)
+    {
+        Data = new ComponentInteractionDataStub
+        {
+            CustomId = customId,
+            _Values = new string[] { value }
+        };
+        User = user;
+    }
+
     public Task DeferAsync(bool ephemeral = false, RequestOptions options = null)
     {
         throw new NotImplementedException();
