@@ -9,9 +9,11 @@
   <ItemGroup>
     <None Remove="Models\" />
     <None Remove="Helpers\" />
+    <None Remove="Enums\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Enums\" />
   </ItemGroup>
 </Project>

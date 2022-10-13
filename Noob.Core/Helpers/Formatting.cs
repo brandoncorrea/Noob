@@ -1,4 +1,6 @@
-﻿namespace Noob.Core.Helpers;
+﻿using Noob.Core.Enums;
+
+namespace Noob.Core.Helpers;
 
 public static class Formatting
 {
@@ -28,20 +30,6 @@ public static class Formatting
         count == 1 ? $"{count} {unitText}" : $"{count} {unitText}s";
     public static string NibletTerm(int niblets) => AsPlural("Niblet", niblets);
     public static string BrownieTerm(int browniePoints) => AsPlural("Brownie Point", browniePoints);
-
-    public static Dictionary<int, string> ItemSlotNames = new Dictionary<int, string>
-    {
-        { 1, "Main Hand" },
-        { 2, "Off-Hand" },
-        { 3, "Head" },
-        { 4, "Torso" },
-        { 5, "Legs" },
-        { 6, "Hands" },
-        { 7, "Feet" },
-        { 8, "Back" },
-    };
-
-    public static string ItemSlotName(int slotId) => ItemSlotNames.GetValueOrDefault(slotId);
 
     public static bool IsNotNullOrWhitespace(string s) =>
         !string.IsNullOrWhiteSpace(s);

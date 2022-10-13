@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Microsoft.VisualBasic;
+using Noob.Core.Enums;
 using Noob.Core.Helpers;
 using Noob.Core.Models;
 using Noob.Discord.Helpers;
@@ -39,7 +40,7 @@ public class ShopMenu : IComponentHandler
             item.Id.ToString(),
             Formatting.TakePopulated(
                 item.Description,
-                Formatting.ItemSlotName(item.SlotId),
+                ItemSlot.NameOf(item.SlotId),
                 Formatting.NibletTerm(item.Price),
                 item.Attack > 0 ? $"{item.Attack} Attack" : "",
                 item.Defense > 0 ? $"{item.Defense} Defense" : "",
