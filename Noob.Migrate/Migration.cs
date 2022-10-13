@@ -26,10 +26,19 @@ public class Migration
 
     public static void ExecuteMigration(Type migration, NoobDbContext db)
     {
-        Console.WriteLine($"Migrating {migration.FullName}");
-        ((IMigration)Activator.CreateInstance(migration)).Migrate(db);
-        Console.WriteLine($"Succeeded {migration.FullName}");
-        File.AppendAllText(MigrationHistoryPath, $"{migration.FullName}\n");
+        try
+        {
+            Console.WriteLine($"Migrating {migration.FullName}");
+            ((IMigration)Activator.CreateInstance(migration)).Migrate(db);
+            Console.WriteLine($"Succeeded {migration.FullName}");
+            File.AppendAllText(MigrationHistoryPath, $"{migration.FullName}\n");
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Migration Failed! {migration.FullName}");
+            Console.WriteLine($"Message: {ex.Message}");
+            Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+        }
     }
 
     public static string[] GetAppliedMigrations() =>
