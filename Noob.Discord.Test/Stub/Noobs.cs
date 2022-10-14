@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Noob.Core.Enums;
 using Noob.Core.Models;
 using Noob.DL;
 namespace Noob.Discord.Test.Stub;
@@ -43,7 +44,7 @@ public static class Noobs
             Price = 10,
             Level = 1,
             Attack = 1,
-            SlotId = 1
+            SlotId = ItemSlot.MainHand.Id
         };
 
         var shield = new Item
@@ -54,7 +55,7 @@ public static class Noobs
             Price = 50,
             Level = 2,
             Defense = 1,
-            SlotId = 2
+            SlotId = ItemSlot.OffHand.Id
         };
 
         var crowbar = new Item
@@ -65,7 +66,7 @@ public static class Noobs
             Price = 100,
             Level = 3,
             Attack = 3,
-            SlotId = 1
+            SlotId = ItemSlot.MainHand.Id
         };
 
         var slippers = new Item
@@ -76,7 +77,7 @@ public static class Noobs
             Price = 100,
             Level = 1,
             Sneak = 1,
-            SlotId = 2
+            SlotId = ItemSlot.OffHand.Id
         };
 
         var mittens = new Item
@@ -86,7 +87,8 @@ public static class Noobs
             Description = "",
             Price = 100,
             Level = 1,
-            Sneak = 1
+            Sneak = 1,
+            SlotId = ItemSlot.Hands.Id
         };
 
         var hat = new Item
@@ -97,6 +99,7 @@ public static class Noobs
             Price = 100,
             Level = 1,
             Perception = 1,
+            SlotId = ItemSlot.Head.Id
         };
 
         var tedStick = new UserItem(ted, stick);

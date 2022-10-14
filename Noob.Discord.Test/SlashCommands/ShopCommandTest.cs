@@ -40,9 +40,9 @@ public class ShopCommandTest
         Assert.AreEqual("Select an option", menu.Placeholder);
         Assert.AreEqual("shop-menu", menu.CustomId);
         Assert.AreEqual(1, menu.Options.Count);
-        Assert.AreEqual("Stick", stickOption.Label);
+        Assert.AreEqual("Stick – Main Hand – 10 Niblets ⚔️ 1 ⭐️ 1", stickOption.Label);
         Assert.AreEqual("1", stickOption.Value);
-        Assert.AreEqual("A wooden stick. | Main Hand | 10 Niblets | 1 Attack | Level 1", stickOption.Description);
+        Assert.AreEqual("A wooden stick.", stickOption.Description);
     }
 
     [TestCase]
@@ -66,12 +66,12 @@ public class ShopCommandTest
         Assert.AreEqual("Select an option", menu.Placeholder);
         Assert.AreEqual("shop-menu", menu.CustomId);
         Assert.AreEqual(2, menu.Options.Count);
-        Assert.AreEqual("Stick", stickOption.Label);
+        Assert.AreEqual("Stick – Main Hand – 10 Niblets ⚔️ 1 ⭐️ 1", stickOption.Label);
         Assert.AreEqual("1", stickOption.Value);
-        Assert.AreEqual("A wooden stick. | Main Hand | 10 Niblets | 1 Attack | Level 1", stickOption.Description);
-        Assert.AreEqual("Shield", shieldOption.Label);
+        Assert.AreEqual("A wooden stick.", stickOption.Description);
+        Assert.AreEqual("Shield – Off-Hand – 50 Niblets 🛡 1 ⭐️ 2", shieldOption.Label);
         Assert.AreEqual("2", shieldOption.Value);
-        Assert.AreEqual("Blocks some stuff. | Off-Hand | 50 Niblets | 1 Defense | Level 2", shieldOption.Description);
+        Assert.AreEqual("Blocks some stuff.", shieldOption.Description);
     }
 
     [TestCase]
@@ -91,9 +91,8 @@ public class ShopCommandTest
         Assert.AreEqual("Select an option", menu.Placeholder);
         Assert.AreEqual("shop-menu", menu.CustomId);
         Assert.AreEqual(1, menu.Options.Count);
-        Assert.AreEqual("Hat", hatOption.Label);
+        Assert.AreEqual("Hat – Head – 100 Niblets 🥷 1 👁 2 ⭐️ 1", hatOption.Label);
         Assert.AreEqual("6", hatOption.Value);
-        Assert.AreEqual("100 Niblets | 1 Sneak | 2 Perception | Level 1", hatOption.Description);
     }
 
     [TestCase]
@@ -111,9 +110,9 @@ public class ShopCommandTest
         Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
         Assert.AreEqual("Select an option", menu.Placeholder);
         Assert.AreEqual("shop-menu", menu.CustomId);
-        Assert.AreEqual("Stick", stickOption.Label);
+        Assert.AreEqual("Stick – Main Hand – 10 Niblets ⚔️ 1 ⭐️ 1", stickOption.Label);
         Assert.AreEqual("1", stickOption.Value);
-        Assert.AreEqual("Main Hand | 10 Niblets | 1 Attack | Level 1", stickOption.Description);
+        Assert.IsNull(stickOption.Description);
     }
 
     [TestCase]
@@ -131,9 +130,9 @@ public class ShopCommandTest
         Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
         Assert.AreEqual("Select an option", menu.Placeholder);
         Assert.AreEqual("shop-menu", menu.CustomId);
-        Assert.AreEqual("Stick", stickOption.Label);
+        Assert.AreEqual("Stick – Main Hand – 10 Niblets ⚔️ 1 ⭐️ 1", stickOption.Label);
         Assert.AreEqual("1", stickOption.Value);
-        Assert.AreEqual("Main Hand | 10 Niblets | 1 Attack | Level 1", stickOption.Description);
+        Assert.IsNull(stickOption.Description);
     }
 
     [TestCase]
@@ -151,9 +150,9 @@ public class ShopCommandTest
         Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
         Assert.AreEqual("Select an option", menu.Placeholder);
         Assert.AreEqual("shop-menu", menu.CustomId);
-        Assert.AreEqual("Stick", stickOption.Label);
+        Assert.AreEqual("Stick – Main Hand – 10 Niblets ⚔️ 1 ⭐️ 1", stickOption.Label);
         Assert.AreEqual("1", stickOption.Value);
-        Assert.AreEqual("Main Hand | 10 Niblets | 1 Attack | Level 1", stickOption.Description);
+        Assert.IsNull(stickOption.Description);
     }
 
     [TestCase]
@@ -171,9 +170,9 @@ public class ShopCommandTest
         Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
         Assert.AreEqual("Select an option", menu.Placeholder);
         Assert.AreEqual("shop-menu", menu.CustomId);
-        Assert.AreEqual("Stick", stickOption.Label);
+        Assert.AreEqual("Stick – Main Hand – 1 Niblet ⚔️ 1 ⭐️ 1", stickOption.Label);
         Assert.AreEqual("1", stickOption.Value);
-        Assert.AreEqual("A wooden stick. | Main Hand | 1 Niblet | 1 Attack | Level 1", stickOption.Description);
+        Assert.AreEqual("A wooden stick.", stickOption.Description);
     }
 
     [TestCase(1, "Main Hand")]
@@ -201,9 +200,9 @@ public class ShopCommandTest
             .Options
             .FirstOrDefault(item => item.Value == "1");
 
-        Assert.AreEqual("Stick", stickOption.Label);
+        Assert.AreEqual($"Stick – {label} – 10 Niblets ⚔️ 1 ⭐️ 1", stickOption.Label);
         Assert.AreEqual("1", stickOption.Value);
-        Assert.AreEqual($"A wooden stick. | {label} | 10 Niblets | 1 Attack | Level 1", stickOption.Description);
+        Assert.AreEqual($"A wooden stick.", stickOption.Description);
     }
 
     [TestCase]

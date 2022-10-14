@@ -36,18 +36,9 @@ public class ShopMenu : IComponentHandler
 
     private SelectMenuOptionBuilder CreateMenuOption(Item item) =>
         new SelectMenuOptionBuilder(
-            item.Name,
+            GetDescriptor(item),
             item.Id.ToString(),
-            Formatting.TakePopulated(
-                item.Description,
-                ItemSlot.NameOf(item.SlotId),
-                Formatting.NibletTerm(item.Price),
-                item.Attack > 0 ? $"{item.Attack} Attack" : "",
-                item.Defense > 0 ? $"{item.Defense} Defense" : "",
-                item.Sneak > 0 ? $"{item.Sneak} Sneak" : "",
-                item.Perception > 0 ? $"{item.Perception} Perception" : "",
-                $"Level {item.Level}")
-            .Join(" | "));
+            string.IsNullOrWhiteSpace(item.Description) ? null : item.Description);
 
     public async Task HandleAsync(IComponentInteraction interaction)
     {
@@ -69,4 +60,14 @@ public class ShopMenu : IComponentHandler
             await interaction.RespondAsync($"{item.Name} has been added to your inventory!", ephemeral: true);
         }
     }
+
+    private string GetDescriptor(Item item) =>
+        Formatting.TakePopulated(
+            $"{item.Name} – {ItemSlot.NameOf(item.SlotId)} – {Formatting.NibletTerm(item.Price)}",
+            item.Attack > 0 ? $"⚔️ {item.Attack}" : "",
+            item.Defense > 0 ? $"🛡 {item.Defense}" : "",
+            item.Sneak > 0 ? $"🥷 {item.Sneak}" : "",
+            item.Perception > 0 ? $"👁 {item.Perception}" : "",
+            $"⭐️ {item.Level}")
+        .Join(" ");
 }
