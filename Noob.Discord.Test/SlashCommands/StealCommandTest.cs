@@ -26,8 +26,7 @@ public class StealCommandTest
         Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(1).SetExperience(50));
         Noobs.UserRepository.Save(Noobs.Ted.SetNiblets(50).SetExperience(2100));
         var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
-        Assert.AreEqual("Bill was caught trying to steal from Ted. What a noob!", interaction.RespondAsyncParams.Text);
-        Assert.IsFalse(interaction.RespondAsyncParams.Ephemeral);
+        IsFailMessage(Noobs.BillDiscord, Noobs.TedDiscord, interaction);
         Assert.AreEqual(0, Noobs.Bill.BrowniePoints);
         Assert.Less(Noobs.Bill.Experience, 50);
         Assert.AreEqual(2100, Noobs.Ted.Experience);
@@ -39,8 +38,7 @@ public class StealCommandTest
         Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(1));
         Noobs.UserRepository.Save(Noobs.Ted.SetNiblets(50).SetExperience(2000));
         var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
-        Assert.AreEqual("Bill was caught trying to steal from Ted. What a noob!", interaction.RespondAsyncParams.Text);
-        Assert.IsFalse(interaction.RespondAsyncParams.Ephemeral);
+        IsFailMessage(Noobs.BillDiscord, Noobs.TedDiscord, interaction);
         Assert.AreEqual(0, Noobs.Bill.BrowniePoints);
         Assert.AreEqual(0, Noobs.Bill.Experience);
         Assert.AreEqual(2000, Noobs.Ted.Experience);
@@ -52,7 +50,7 @@ public class StealCommandTest
         Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(1).SetExperience(2100));
         Noobs.UserRepository.Save(Noobs.Ted.SetNiblets(50).SetExperience(50));
         var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
-        Assert.AreEqual($"You stole {Noobs.Bill.Niblets} Niblets from Ted >:)", interaction.RespondAsyncParams.Text);
+        Assert.AreEqual($"You stole {Noobs.Bill.Niblets} Niblets from Ted 😈", interaction.RespondAsyncParams.Text);
         Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
         Assert.AreEqual(0, Noobs.Bill.BrowniePoints);
         Assert.AreEqual(2100, Noobs.Bill.Experience);
@@ -66,7 +64,7 @@ public class StealCommandTest
         Noobs.UserRepository.Save(Noobs.Ted.SetNiblets(50));
         Noobs.ItemRepository.Save(Noobs.Mittens.SetSneak(20));
         var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
-        Assert.AreEqual($"You stole {Noobs.Bill.Niblets} Niblets from Ted >:)", interaction.RespondAsyncParams.Text);
+        Assert.AreEqual($"You stole {Noobs.Bill.Niblets} Niblets from Ted 😈", interaction.RespondAsyncParams.Text);
     }
 
     [TestCase]
@@ -75,7 +73,7 @@ public class StealCommandTest
         Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(1));
         Noobs.ItemRepository.Save(Noobs.Stick.SetPerception(20));
         var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
-        Assert.AreEqual("Bill was caught trying to steal from Ted. What a noob!", interaction.RespondAsyncParams.Text);
+        IsFailMessage(Noobs.BillDiscord, Noobs.TedDiscord, interaction);
     }
 
     [TestCase]
@@ -85,7 +83,7 @@ public class StealCommandTest
         Noobs.ItemRepository.Save(Noobs.Mittens.SetPerception(10));
         Noobs.ItemRepository.Save(Noobs.Slippers.SetPerception(10));
         var interaction = await Steal(Noobs.TedDiscord, Noobs.BillDiscord);
-        Assert.AreEqual($"Ted was caught trying to steal from Bill. What a noob!", interaction.RespondAsyncParams.Text);
+        IsFailMessage(Noobs.TedDiscord, Noobs.BillDiscord, interaction);
     }
 
     [TestCase]
@@ -129,7 +127,7 @@ public class StealCommandTest
         Noobs.UserRepository.Save(Noobs.Bill.SetBrowniePoints(2).SetExperience(2100));
         Noobs.UserRepository.Save(Noobs.Ted.SetNiblets(1).SetExperience(50));
         var interaction = await Steal(Noobs.BillDiscord, Noobs.TedDiscord);
-        Assert.AreEqual($"You stole 1 Niblet from Ted >:)", interaction.RespondAsyncParams.Text);
+        Assert.AreEqual($"You stole 1 Niblet from Ted 😈", interaction.RespondAsyncParams.Text);
         Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
         Assert.AreEqual(2100, Noobs.Bill.Experience);
         Assert.Less(Noobs.Ted.Experience, 50);
@@ -147,6 +145,13 @@ public class StealCommandTest
         Assert.IsTrue(interaction.RespondAsyncParams.Ephemeral);
         Assert.AreEqual(2100, Noobs.Bill.Experience);
         Assert.AreEqual(2, Noobs.Bill.BrowniePoints);
+    }
+
+    private void IsFailMessage(IUser user, IUser victim, InteractionStub interaction)
+    {
+        var messages = StealCommand.FailureMessages.Select(s => string.Format(s, user.Username, victim.Username)).ToArray();
+        Assert.Contains(interaction.RespondAsyncParams.Text, messages);
+        Assert.IsFalse(interaction.RespondAsyncParams.Ephemeral);
     }
 
     private async Task<InteractionStub> Steal(IUser user, IUser victim)

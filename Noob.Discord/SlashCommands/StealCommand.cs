@@ -2,6 +2,7 @@
 using Noob.Core.Helpers;
 using Noob.Core.Models;
 using Noob.DL;
+
 namespace Noob.Discord.SlashCommands;
 
 public class StealCommand : ISlashCommandHandler
@@ -10,6 +11,17 @@ public class StealCommand : ISlashCommandHandler
     private IUserRepository UserRepository;
     private IItemRepository ItemRepository;
     private IEquippedItemRepository EquippedItemRepository;
+
+    public static string[] FailureMessages = new[]
+    {
+        "{0} was caught trying to steal from {1}. What a noob!",
+        "{0} sneezed on {1}'s face while trying to steal from them!",
+        "{0} stepped on a lego while sneaking around {1}, letting out a bellowing shriek.",
+        "{0} stubbed thier little toe on {1}'s garden gnomes.",
+        "{0} fell up the stairs while sneaking about {1}'s home.",
+        "As {0} reached into {1}'s pocket, their hand was bitten by {1}'s dentures.",
+        "{0} almost got away with robbing {1}, but their impulsive humming gave them away."
+    };
 
     public StealCommand(
         IUserRepository userRepository,
@@ -80,7 +92,7 @@ public class StealCommand : ISlashCommandHandler
         victim.Niblets -= niblets;
         UserRepository.Save(user);
         UserRepository.Save(victim);
-        await command.RespondAsync($"You stole {Formatting.NibletTerm(niblets)} from {discordTarget.Username} >:)", ephemeral: true);
+        await command.RespondAsync($"You stole {Formatting.NibletTerm(niblets)} from {discordTarget.Username} 😈", ephemeral: true);
     }
 
     private async Task AnnounceTheftFailure(ISlashCommandInteraction command, IUser discordTarget, User user, User victim)
@@ -90,7 +102,7 @@ public class StealCommand : ISlashCommandHandler
         user.BrowniePoints--;
         UserRepository.Save(user);
         UserRepository.Save(victim);
-        await command.RespondAsync($"{command.User.Username} was caught trying to steal from {discordTarget.Username}. What a noob!");
+        await command.RespondAsync(string.Format(FailureMessages.RandomChoice(), command.User.Username, discordTarget.Username));
     }
 
     private long CalculateExperience(User user, User opponent)
