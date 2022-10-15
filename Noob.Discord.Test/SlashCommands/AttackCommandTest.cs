@@ -22,7 +22,7 @@ public class AttackCommandTest
     {
         Noobs.UserRepository.Save(Noobs.Ted.SetExperience(2000));
         var interaction = await Attack(Noobs.BillDiscord, Noobs.TedDiscord);
-        Assert.AreEqual("Bill tried attacking Ted and got PWND!", interaction.RespondAsyncParams.Text);
+        IsFailMessage(Noobs.BillDiscord, Noobs.TedDiscord, interaction);
         Assert.IsFalse(interaction.RespondAsyncParams.Ephemeral);
         Assert.AreEqual(0, Noobs.Bill.Experience);
         Assert.AreEqual(2000, Noobs.Ted.Experience);
@@ -34,7 +34,7 @@ public class AttackCommandTest
         Noobs.UserRepository.Save(Noobs.Bill.SetExperience(50));
         Noobs.UserRepository.Save(Noobs.Ted.SetExperience(2000));
         var interaction = await Attack(Noobs.BillDiscord, Noobs.TedDiscord);
-        Assert.AreEqual("Bill tried attacking Ted and got PWND!", interaction.RespondAsyncParams.Text);
+        IsFailMessage(Noobs.BillDiscord, Noobs.TedDiscord, interaction);
         Assert.IsFalse(interaction.RespondAsyncParams.Ephemeral);
         Assert.AreEqual(50, Noobs.Bill.Experience);
         Assert.AreEqual(2000, Noobs.Ted.Experience);
@@ -45,7 +45,7 @@ public class AttackCommandTest
     {
         Noobs.ItemRepository.Save(Noobs.Stick.SetAttack(20));
         var interaction = await Attack(Noobs.TedDiscord, Noobs.BillDiscord);
-        Assert.AreEqual("Ted just beat the living daylights out of Bill!", interaction.RespondAsyncParams.Text);
+        IsSuccessMessage(Noobs.TedDiscord, Noobs.BillDiscord, interaction);
     }
 
     [TestCase]
@@ -53,7 +53,7 @@ public class AttackCommandTest
     {
         Noobs.ItemRepository.Save(Noobs.Mittens.SetDefense(20));
         var interaction = await Attack(Noobs.TedDiscord, Noobs.BillDiscord);
-        Assert.AreEqual("Ted tried attacking Bill and got PWND!", interaction.RespondAsyncParams.Text);
+        IsFailMessage(Noobs.TedDiscord, Noobs.BillDiscord, interaction);
     }
 
     [TestCase]
@@ -62,7 +62,7 @@ public class AttackCommandTest
         Noobs.ItemRepository.Save(Noobs.Mittens.SetDefense(10));
         Noobs.ItemRepository.Save(Noobs.Slippers.SetDefense(10));
         var interaction = await Attack(Noobs.TedDiscord, Noobs.BillDiscord);
-        Assert.AreEqual("Ted tried attacking Bill and got PWND!", interaction.RespondAsyncParams.Text);
+        IsFailMessage(Noobs.TedDiscord, Noobs.BillDiscord, interaction);
     }
 
     [TestCase]
@@ -71,7 +71,7 @@ public class AttackCommandTest
         Noobs.UserRepository.Save(Noobs.Bill.SetExperience(2000));
         Noobs.UserRepository.Save(Noobs.Ted.SetExperience(50));
         var interaction = await Attack(Noobs.BillDiscord, Noobs.TedDiscord);
-        Assert.AreEqual("Bill just beat the living daylights out of Ted!", interaction.RespondAsyncParams.Text);
+        IsSuccessMessage(Noobs.BillDiscord, Noobs.TedDiscord, interaction);
         Assert.IsFalse(interaction.RespondAsyncParams.Ephemeral);
         Assert.AreEqual(2000, Noobs.Bill.Experience);
         Assert.AreEqual(50, Noobs.Ted.Experience);
@@ -94,7 +94,7 @@ public class AttackCommandTest
         Noobs.UserRepository.Save(Noobs.Bill.SetExperience(2100));
         Noobs.UserRepository.Delete(Noobs.Ted);
         var interaction = await Attack(Noobs.BillDiscord, Noobs.TedDiscord);
-        Assert.AreEqual($"Bill just beat the living daylights out of Ted!", interaction.RespondAsyncParams.Text);
+        IsSuccessMessage(Noobs.BillDiscord, Noobs.TedDiscord, interaction);
         Assert.IsFalse(interaction.RespondAsyncParams.Ephemeral);
         Assert.AreEqual(2100, Noobs.Bill.Experience);
         Assert.AreEqual(0, Noobs.Ted.Experience);
@@ -107,6 +107,18 @@ public class AttackCommandTest
         var interaction = await Attack(Noobs.BillDiscord, Noobs.TedDiscord);
         Assert.IsFalse(interaction.RespondAsyncParams.Ephemeral);
         Assert.IsNotNull(Noobs.Bill.Experience);
+    }
+
+    private void IsSuccessMessage(IUser user, IUser victim, InteractionStub interaction) =>
+        IsFormattedMessage(AttackCommand.SuccessMessages, user, victim, interaction);
+
+    private void IsFailMessage(IUser user, IUser victim, InteractionStub interaction) =>
+        IsFormattedMessage(AttackCommand.FailureMessages, user, victim, interaction);
+
+    private void IsFormattedMessage(string[] formats, IUser user, IUser victim, InteractionStub interaction)
+    {
+        var messages = formats.Select(s => string.Format(s, user.Username, victim.Username)).ToArray();
+        Assert.Contains(interaction.RespondAsyncParams.Text, messages);
     }
 
     private async Task<InteractionStub> Attack(IUser user, IUser victim)

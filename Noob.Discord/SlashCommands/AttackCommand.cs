@@ -2,6 +2,8 @@
 using Noob.Core.Helpers;
 using Noob.Core.Models;
 using Noob.DL;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
 namespace Noob.Discord.SlashCommands;
 
 public class AttackCommand : ISlashCommandHandler
@@ -10,6 +12,22 @@ public class AttackCommand : ISlashCommandHandler
     private IUserRepository UserRepository;
     private IItemRepository ItemRepository;
     private IEquippedItemRepository EquippedItemRepository;
+
+    public static string[] SuccessMessages = new[]
+    {
+        "{0} just beat the living daylights out of {1}!",
+        "{0} shoved {1} off the edge of a cliff.",
+        "{0} knocked {1} into the middle of next week!",
+        "{0} smacked {1} upside the head!",
+    };
+
+    public static string[] FailureMessages = new[]
+    {
+        "{0} tried attacking {1} and got PWND!",
+        "{0} went to do a roundhouse kick on {1}, but fell on their face instead.",
+        "{0}'s plan to train an army of bees to sting {1} dreadfully backfired.",
+        "{0} accidentally gave {1} the wrong cup of wine and wound up drinking the poison.",
+    };
 
     public AttackCommand(
         IUserRepository userRepository,
@@ -63,7 +81,7 @@ public class AttackCommand : ISlashCommandHandler
         AddExperienceTo(victim, CalculateExperience(victim, user));
         UserRepository.Save(user);
         UserRepository.Save(victim);
-        await command.RespondAsync($"{command.User.Username} tried attacking {discordTarget.Username} and got PWND!");
+        await RespondRandomMessage(FailureMessages, command, discordTarget);
     }
 
     private async Task AttackTarget(ISlashCommandInteraction command, IUser discordTarget, User user, User victim)
@@ -72,8 +90,11 @@ public class AttackCommand : ISlashCommandHandler
         RemoveExperienceFrom(victim, CalculateExperience(victim, user));
         UserRepository.Save(user);
         UserRepository.Save(victim);
-        await command.RespondAsync($"{command.User.Username} just beat the living daylights out of {discordTarget.Username}!");
+        await RespondRandomMessage(SuccessMessages, command, discordTarget);
     }
+
+    private async Task RespondRandomMessage(string[] messages, ISlashCommandInteraction interaction, IUser target) =>
+        await interaction.RespondAsync(string.Format(messages.RandomChoice(), interaction.User.Username, target.Username));
 
     private long CalculateExperience(User user, User opponent) =>
         Math.Abs(opponent.Level - user.Level) >= 5
