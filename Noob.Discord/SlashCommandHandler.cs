@@ -18,6 +18,7 @@ public class SlashCommandHandler
     {
         SlashCommandHandlers = new ISlashCommandHandler[]
         {
+            new HelpCommand(),
             new DailyCommand(userRepository, userCommandRepository),
             new WeeklyCommand(userRepository, userCommandRepository),
             new GiveCommand(userRepository),

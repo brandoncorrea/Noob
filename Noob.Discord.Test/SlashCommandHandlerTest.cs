@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using System.Runtime.Intrinsics.X86;
+using Discord;
 using Noob.Discord.Test.Stub;
 
 namespace Noob.Discord.Test;
@@ -25,6 +26,8 @@ public class SlashCommandHandlerTest
         Assert.IsNotNull(FindCommand("weekly", "Redeem your weekly Niblets!"));
         Assert.IsNotNull(FindCommand("stats", "View your player stats."));
         Assert.IsNotNull(FindCommand("shop", "Purchase items from the shopkeeper."));
+        Assert.IsNotNull(FindCommand("inventory", "See your inventory!"));
+        Assert.IsNotNull(FindCommand("help", "How to noob."));
     }
 
     [Test]
