@@ -5,3 +5,4 @@ db/
 discord.token
 Noob.App/migrations.txt
 Noob.App/migrations.log
+.DS_Store

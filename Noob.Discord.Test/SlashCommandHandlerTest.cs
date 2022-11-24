@@ -49,6 +49,17 @@ public class SlashCommandHandlerTest
     }
 
     [Test]
+    public void CreatesLoveCommand()
+    {
+        var command = FindCommand("love", "Love another player ❤️");
+        var userOption = command.Options.Value.First();
+        Assert.AreEqual("user", userOption.Name);
+        Assert.AreEqual("The user you love.", userOption.Description);
+        Assert.AreEqual(ApplicationCommandOptionType.User, userOption.Type);
+        Assert.IsTrue(userOption.IsRequired);
+    }
+
+    [Test]
     public void CreatesStealCommand()
     {
         var command = FindCommand("steal", "Steal Niblets from another player!");

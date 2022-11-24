@@ -19,6 +19,7 @@ public class SlashCommandHandler
         SlashCommandHandlers = new ISlashCommandHandler[]
         {
             new HelpCommand(),
+            new LoveCommand(),
             new DailyCommand(userRepository, userCommandRepository),
             new WeeklyCommand(userRepository, userCommandRepository),
             new GiveCommand(userRepository),
@@ -26,7 +27,7 @@ public class SlashCommandHandler
             new StatsCommand(userRepository),
             new ShopCommand(itemRepository, userItemRepository),
             new AttackCommand(userRepository, itemRepository, equippedItemRepository),
-            new InventoryCommand(userRepository, itemRepository, userItemRepository, equippedItemRepository)
+            new InventoryCommand(userRepository, itemRepository, userItemRepository, equippedItemRepository),
         };
         SlashCommands = CreateSlashCommands();
     }
