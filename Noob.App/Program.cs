@@ -12,6 +12,7 @@ public class Program
 
             var itemRepository = new DbContextItemRepository(db);
             await new Bot(
+                new DbContextGuildCountRepository(db),
                 new DbContextUserRepository(db),
                 new DbContextUserCommandRepository(db),
                 itemRepository,

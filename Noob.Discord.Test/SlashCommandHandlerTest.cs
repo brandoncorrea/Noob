@@ -12,6 +12,8 @@ public class SlashCommandHandlerTest
     [SetUp]
     public void SetUp() =>
         SlashCommands = new SlashCommandHandler(
+            Noobs.SocketClient,
+            Noobs.GuildCountRepository,
             Noobs.UserRepository,
             Noobs.UserCommandRepository,
             Noobs.ItemRepository,
@@ -22,12 +24,14 @@ public class SlashCommandHandlerTest
     [Test]
     public void CreatesSlashCommandProperties()
     {
-        Assert.IsNotNull(FindCommand("daily", "Redeem your daily Niblets!"));
-        Assert.IsNotNull(FindCommand("weekly", "Redeem your weekly Niblets!"));
-        Assert.IsNotNull(FindCommand("stats", "View your player stats."));
-        Assert.IsNotNull(FindCommand("shop", "Purchase items from the shopkeeper."));
-        Assert.IsNotNull(FindCommand("inventory", "See your inventory!"));
-        Assert.IsNotNull(FindCommand("help", "How to noob."));
+        AssertCommand("daily", "Redeem your daily Niblets!");
+        AssertCommand("weekly", "Redeem your weekly Niblets!");
+        AssertCommand("stats", "View your player stats.");
+        AssertCommand("shop", "Purchase items from the shopkeeper.");
+        AssertCommand("inventory", "See your inventory!");
+        AssertCommand("help", "How to noob.");
+        AssertCommand("count-start", "Start counting on this channel.");
+        AssertCommand("count-stop", "Stop counting on this server.");
     }
 
     [Test]
@@ -82,6 +86,9 @@ public class SlashCommandHandlerTest
         Assert.AreEqual(ApplicationCommandOptionType.User, targetOption.Type);
         Assert.IsTrue(targetOption.IsRequired);
     }
+
+    private void AssertCommand(string name, string description) =>
+        Assert.IsNotNull(FindCommand(name, description));
 
     private SlashCommandProperties FindCommand(string name, string description) =>
         SlashCommands.FirstOrDefault(command =>

@@ -1,11 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Discord;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Noob.Core.Enums;
 using Noob.Core.Models;
+using Noob.Discord.Sockets;
 using Noob.DL;
 namespace Noob.Discord.Test.Stub;
 
 public static class Noobs
 {
+    public static Dictionary<ulong, ulong> UserPermissions;
     public static User Bill => UserRepository.Find(1);
     public static User Ted => UserRepository.Find(2);
     public static Item Stick => ItemRepository.Find(1);
@@ -21,17 +25,26 @@ public static class Noobs
     public static DiscordUserStub TedDiscord;
     public static UserCommand BillDaily => UserCommandRepository.Find(1, 1);
     public static UserCommand TedWeekly => UserCommandRepository.Find(2, 2);
+
+    public static SocketClientStub SocketClient;
     public static IUserRepository UserRepository;
     public static IUserCommandRepository UserCommandRepository;
     public static IItemRepository ItemRepository;
     public static IUserItemRepository UserItemRepository;
     public static IEquippedItemRepository EquippedItemRepository;
+    public static IGuildCountRepository GuildCountRepository;
     public static NoobDbContext Db;
 
     public static void Initialize()
     {
         var bill = new User(1);
         var ted = new User(2);
+        UserPermissions = new Dictionary<ulong, ulong>
+        {
+            { bill.Id, ulong.MaxValue},
+            { ted.Id, ulong.MaxValue}
+        };
+        SocketClient = new SocketClientStub(UserPermissions);
 
         var billDaily = new UserCommand(bill, 1);
         var tedWeekly = new UserCommand(ted, 2);
@@ -137,6 +150,7 @@ public static class Noobs
         ItemRepository = new DbContextItemRepository(Db);
         UserItemRepository = new DbContextUserItemRepository(Db);
         EquippedItemRepository = new DbContextEquippedItemRepository(Db, ItemRepository);
+        GuildCountRepository = new DbContextGuildCountRepository(Db);
 
         BillDiscord = new DiscordUserStub(bill.Id, "Bill", "billy");
         TedDiscord = new DiscordUserStub(ted.Id, "Ted", "teddy");

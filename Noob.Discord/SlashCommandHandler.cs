@@ -1,6 +1,8 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using Noob.Discord.SlashCommands;
+using Noob.Discord.Sockets;
 using Noob.DL;
 namespace Noob.Discord;
 
@@ -10,6 +12,8 @@ public class SlashCommandHandler
     public IEnumerable<ISlashCommandHandler> SlashCommandHandlers;
 
     public SlashCommandHandler(
+        ISocketClient client,
+        IGuildCountRepository guildCountRepository,
         IUserRepository userRepository,
         IUserCommandRepository userCommandRepository,
         IItemRepository itemRepository,
@@ -20,6 +24,8 @@ public class SlashCommandHandler
         {
             new HelpCommand(),
             new LoveCommand(),
+            new CountStartCommand(client, guildCountRepository),
+            new CountStopCommand(client, guildCountRepository),
             new DailyCommand(userRepository, userCommandRepository),
             new WeeklyCommand(userRepository, userCommandRepository),
             new GiveCommand(userRepository),

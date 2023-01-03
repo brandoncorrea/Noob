@@ -3,6 +3,7 @@ using Discord;
 //using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using Noob.Discord.Sockets;
 //using Noob.Discord.Modules;
 //using Noob.Discord.SlashCommands;
 using Noob.DL;
@@ -14,11 +15,12 @@ namespace Noob.Discord;
 /// </summary>
 public class Bot
 {
-    private DiscordSocketClient Client;
+    private ISocketClient Client;
     //private InteractionService Interactions;
     private readonly IServiceProvider ServiceProvider;
 
     public Bot(
+        IGuildCountRepository guildCountRepository,
         IUserRepository userRepository,
         IUserCommandRepository userCommandRepository,
         IItemRepository itemRepository,
@@ -29,13 +31,14 @@ public class Bot
             {
                 GatewayIntents = GatewayIntents.AllUnprivileged
             })
-            .AddSingleton<DiscordSocketClient>()
+            .AddSingleton<ISocketClient, DiscordNetSocketClient>()
             //.AddSingleton<InteractionService>()
             .AddSingleton<IUserRepository>(userRepository)
-            .AddSingleton< IUserCommandRepository>(userCommandRepository)
+            .AddSingleton<IUserCommandRepository>(userCommandRepository)
             .AddSingleton<IItemRepository>(itemRepository)
             .AddSingleton<IUserItemRepository>(userItemRepository)
             .AddSingleton<IEquippedItemRepository>(equippedItemRepository)
+            .AddSingleton<IGuildCountRepository>(guildCountRepository)
             .AddSingleton<SlashCommandHandler>()
             .AddSingleton<SelectMenuHandler>()
             .AddSingleton<ButtonHandler>()
@@ -44,7 +47,7 @@ public class Bot
     public async Task StartAsync(string token)
     {
         //Interactions = ServiceProvider.GetRequiredService<InteractionService>();
-        Client = ServiceProvider.GetRequiredService<DiscordSocketClient>();
+        Client = ServiceProvider.GetRequiredService<ISocketClient>();
         Client.Log += Log;
         Client.SlashCommandExecuted += ServiceProvider.GetRequiredService<SlashCommandHandler>().HandleAsync;
         Client.SelectMenuExecuted += ServiceProvider.GetRequiredService<SelectMenuHandler>().HandleAsync;
