@@ -17,7 +17,7 @@ public class Program
                 itemRepository,
                 new DbContextUserItemRepository(db),
                 new DbContextEquippedItemRepository(db, itemRepository))
-                .StartAsync(File.ReadAllText("discord.token"));
+                .StartAsync(File.ReadAllText("discord.token").Trim());
 
             await Task.Delay(-1);
         }
