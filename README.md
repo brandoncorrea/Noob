@@ -1,9 +1,13 @@
 # Noob.API
 Noob Discord Bot
 
-Use this link to add it to your server!
+#### Use this link to add it to your server!
 
 https://discord.com/api/oauth2/authorize?client_id=1027797501660643368&permissions=0&scope=bot%20applications.commands
+
+#### Join our Discord Server
+
+https://discord.gg/VT3YqXSqf
 
 ## Getting Started
 
